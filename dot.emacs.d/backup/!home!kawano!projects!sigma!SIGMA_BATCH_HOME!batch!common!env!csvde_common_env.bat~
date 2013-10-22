@@ -1,0 +1,21 @@
+@rem ========================================================================
+@rem   シグマバッチ共通環境変数定義スクリプト
+@rem   Version:1.0
+@rem ========================================================================
+@rem                   吉積情報株式会社
+@rem ========================================================================
+@echo off
+
+set SIGMA_HOME=D:\tsunayoshi\SIGMA_BATCH_HOME\
+
+set PATH=%PATH%;%SIGMA_HOME%/batch/common/env
+set PATH=%PATH%;%SIGMA_HOME%/batch/common/invoke
+set PATH=%PATH%;%SIGMA_HOME%/batch/common/tool
+
+set CSV_OUT_PUT_PATH=%SIGMA_HOME%\csv\
+
+@rem ActiveDirectory Host情報------------------------------------------------
+set HOST=localhost
+
+@rem ActiveDirectory Port情報------------------------------------------------
+set PORT=389

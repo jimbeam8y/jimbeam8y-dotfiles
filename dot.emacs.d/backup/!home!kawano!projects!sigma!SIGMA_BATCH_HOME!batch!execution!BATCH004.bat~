@@ -1,0 +1,13 @@
+@rem ========================================================================
+@rem   組織・メーリングリスト情報Dump用スクリプト
+@rem   Version:1.0
+@rem ========================================================================
+@rem                   吉積情報株式会社
+@rem ========================================================================
+call ..\common\env\batch_common_env.bat
+
+set BATCH_PARAM=  
+set BATCH_PARAM=%BATCH_PARAM% -userCsvFile d:/tsunayoshi/csv/activedirectory.csv;d:/tsunayoshi/csv/activedirectory.csv
+set BATCH_PARAM=%BATCH_PARAM% -groupCsvFile d:/tsunayoshi/csv/group_mailinglist.csv
+@rem バッチ実行のインポート----------------------------------------------------
+call invoke_batch jp.co.tokyu.hands.google.sso.batch.worker.UserCSVImportWorker %BATCH_PARAM%

@@ -1,0 +1,5 @@
+<factorypath>
+    <factorypathentry kind="WKSPJAR" id="/NaviPla_Longine/lib/slim3-gen-1.0.15.jar" enabled="true" runInBatchMode="false"/>
+    <factorypathentry kind="PLUGIN" id="org.eclipse.jst.ws.annotations.core" enabled="false" runInBatchMode="false"/>
+    <factorypathentry kind="WKSPJAR" id="/NaviPla_Longine/war/WEB-INF/lib/izanami-daogen-current.jar" enabled="true" runInBatchMode="false"/>
+</factorypath>

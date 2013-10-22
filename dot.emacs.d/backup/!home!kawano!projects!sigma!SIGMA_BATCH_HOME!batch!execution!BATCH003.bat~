@@ -1,0 +1,27 @@
+@rem ========================================================================
+@rem   組織・メーリングリスト情報Dump用スクリプト
+@rem   Version:1.0
+@rem ========================================================================
+@rem                   吉積情報株式会社
+@rem ========================================================================
+call ..\common\env\csvde_common_env.bat
+
+@rem CSVファイル名-----------------------------------------------------------
+set CSV_FILE_NAME=group_mailinglist.csv
+
+@rem BASE_DN_NAME------------------------------------------------------------
+rem set BASE_DN_NAME="OU=Users,OU=sigma,DC=sigma,DC=local"
+set BASE_DN_NAME="OU=app.yoshidumi,OU=sigma,DC=SHISUITEN,DC=LOCAL"
+
+@rem Filter------------------------------------------------------------------
+set FILTER="(objectClass=group)"
+
+@rem ActiveDirectory Dumpパラメータ------------------------------------------
+set OUT_FIELD=cn
+set OUT_FIELD=%OUT_FIELD%,whenChanged
+set OUT_FIELD=%OUT_FIELD%,description
+set OUT_FIELD=%OUT_FIELD%,mail
+set OUT_FIELD=%OUT_FIELD%,member
+
+@rem 共通変数のインポート----------------------------------------------------
+call csvde_invoke %CSV_FILE_NAME% %BASE_DN_NAME% %FILTER%

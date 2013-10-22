@@ -1,0 +1,24 @@
+((("package-initialize" .
+   [0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0])
+  ("add-to-list" .
+   [0 0 0 0 0 0 0 0 0 0 1])
+  ("package" .
+   [0 0 0 1 0 0 0])
+  ("recentf-mode" .
+   [0 0 0 0 0 0 1 0 0 0 0 0])
+  ("recentf" .
+   [0 0 0 0 1 0 0])
+  ("which-function-mode" .
+   [0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("require" .
+   [0 0 0 0 4 1 0])
+  ("ErrorAction4Batch" .
+   [0 0 0 0 0 1 1 1 0 0 0 0 0 0 0 0 0])
+  ("REREGISTER" .
+   [0 0 0 2 0 0 0 0 0 0])
+  ("RETRY" .
+   [1 0 3 1 0])
+  ("ERROR" .
+   [1 0 0 1 0])
+  ("VALIDATE" .
+   [0 0 1 0 0 0 0 0])))

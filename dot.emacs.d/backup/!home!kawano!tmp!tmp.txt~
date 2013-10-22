@@ -1,0 +1,17 @@
+OU=app.yoshidumi,OU=yoshidumi,DC=SHISUITEN,DC=LOCAL
+
+
+kogu-age.appspot.com  は、appengineのみで作ってます。構造はwebapp2ベースのシンプルな自作CMSって感じで、ndb、jinja2、markdown、lxmlと無難な構成。
+
+人物の年齢が主コンテンツなので、権利をクリアした人物の画像が使いたくてAmazonのAPIから大きめに写真を。ただ、キャッシュが24時間までしか許可されず、リクエストも1/sなので、幾つか工夫を。
+
+具体的には商品単位でのキャッシュを諦め、レンダリング済のページ単位でキャッシュ。夜中に更新。更新はbackendsですが、マルチスレッドで1/sルールに引っかかるので、Thread safeなしで。
+
+現在113の人物と、その出来事が931件。物語96と、そのキャラクター525件。これに関するページのキャッシュを、B1のbacckendsインスタンス1つで毎晩再生成して、無料枠に収まってます。
+
+キャッシュは主にページ単位で、Datastoreとmemcacheの2段。キャッシュしてるページ数が681で、TaskQueueでの更新に、トータルで3 Instance Hoursほど。
+
+フロントはYahoo Pureで、Amazon API利用規約上、モバイルデバイスには意図的に最適化してません。バックエンドはBootstrap 2。
+
+TwitterにサービスのURL公開すると、botからHEADで存在確認が一挙に。405返しちゃってた。webappだとhead()使えるんで、passのみで対処しました。 
+

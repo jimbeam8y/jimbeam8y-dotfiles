@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=WebStorm
+Comment=WebStorm
+Exec=/home/kawano/WebStorm/bin/webstrom.sh
+Terminal=false
+Type=Application
+Icon=/home/kawano/WebStorm/bin/webide.png
+Categories=Development;

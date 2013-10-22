@@ -1,0 +1,714 @@
+package jp.co.navipla.longine.logic;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
+
+import jp.co.ks.merchanttool.connectmodule.exception.PaygentB2BModuleConnectException;
+import jp.co.ks.merchanttool.connectmodule.exception.PaygentB2BModuleException;
+import jp.co.ks.merchanttool.connectmodule.system.PaygentB2BModule;
+import jp.co.navipla.longine.Config;
+import jp.co.navipla.longine.dto.PaygentErrorHandlingDto;
+import jp.co.navipla.longine.exception.PaymentException;
+import jp.co.navipla.longine.model.PaygentEnv;
+import jp.co.navipla.longine.model.SystemSettings;
+import jp.co.navipla.longine.model.User;
+import jp.co.navipla.longine.pso.CardPso;
+import jp.co.navipla.longine.pso.LogonTokenPso;
+import jp.co.navipla.longine.util.DateUtil;
+import jp.co.navipla.longine.util.RandomUtil;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.slim3.util.ApplicationMessage;
+import org.slim3.util.StringUtil;
+
+public class PaygentLogic {
+	private static final Logger LOGGER = Logger.getLogger(PaygentLogic.class.toString());
+	//private PaygentEnvDao paygentEnvDao;
+	private SystemSettingsLogic systemSettingsLogic;
+
+	private static final String PROCESS_IS_SUCCESS = "0";
+	public static final String TRADING_ID = "trading_id";
+	public static final String PAYMENT_ID = "payment_id";
+
+	private static final String CHECK_FLG = "1";
+
+	// Paygentエラーコード表。（古い定義）
+	private static final Map<String, ErrorType> OLD_ERRORS_MAP = new HashMap<>();
+
+	// Paygentエラーコード表。（古い定義）
+	static {
+		OLD_ERRORS_MAP.put("P015", ErrorType.PAYGENT);
+		OLD_ERRORS_MAP.put("P016", ErrorType.PAYGENT);
+		OLD_ERRORS_MAP.put("P018", ErrorType.PAYGENT);
+		OLD_ERRORS_MAP.put("P024", ErrorType.PAYGENT);
+		OLD_ERRORS_MAP.put("P027", ErrorType.PAYGENT);
+		OLD_ERRORS_MAP.put("E001", ErrorType.PAYGENT);
+		OLD_ERRORS_MAP.put("E002", ErrorType.PAYGENT);
+		OLD_ERRORS_MAP.put("2002", ErrorType.PAYGENT);
+		OLD_ERRORS_MAP.put("2009", ErrorType.PAYGENT);
+		OLD_ERRORS_MAP.put("P008", ErrorType.CARD);
+		OLD_ERRORS_MAP.put("P009", ErrorType.CARD);
+		OLD_ERRORS_MAP.put("P010", ErrorType.CARD);
+		OLD_ERRORS_MAP.put("P025", ErrorType.CARD);
+		OLD_ERRORS_MAP.put("2001", ErrorType.CARD);
+		OLD_ERRORS_MAP.put("2006", ErrorType.CARD);
+		OLD_ERRORS_MAP.put("2016", ErrorType.CARD);
+		OLD_ERRORS_MAP.put("2017", ErrorType.CARD);
+		OLD_ERRORS_MAP.put("P001", ErrorType.LONGINE);
+		OLD_ERRORS_MAP.put("P002", ErrorType.LONGINE);
+		OLD_ERRORS_MAP.put("P003", ErrorType.LONGINE);
+		OLD_ERRORS_MAP.put("P004", ErrorType.LONGINE);
+		OLD_ERRORS_MAP.put("P005", ErrorType.LONGINE);
+		OLD_ERRORS_MAP.put("P006", ErrorType.LONGINE);
+		OLD_ERRORS_MAP.put("P014", ErrorType.LONGINE);
+		OLD_ERRORS_MAP.put("P030", ErrorType.LONGINE);
+		OLD_ERRORS_MAP.put("2004", ErrorType.LONGINE);
+		OLD_ERRORS_MAP.put("2007", ErrorType.LONGINE);
+		OLD_ERRORS_MAP.put("P017", ErrorType.RETRY);
+		OLD_ERRORS_MAP.put("9005", ErrorType.RETRY);
+		OLD_ERRORS_MAP.put("2005", ErrorType.RETRY);
+		OLD_ERRORS_MAP.put("2008", ErrorType.RETRY);
+	}
+
+	// Paygentエラータイプ。（古い定義）
+	public static enum ErrorType {
+		PAYGENT("Paygentに確認してください"), CARD("ユーザの対応が必要"), LONGINE("Longine修正が必要"), RETRY("再実行"), OTHER(
+				"ログを確認してください");
+		private String errorType;
+
+		ErrorType(String errorType) {
+			this.errorType = errorType;
+		}
+
+		public String getErrorType() {
+			return errorType;
+		}
+
+		public String getName() {
+			return name();
+		}
+	}
+
+	// Paygentエラータイプ取得。（古い定義）
+	public static ErrorType getErrorType(String code) {
+		ErrorType type = OLD_ERRORS_MAP.get(code);
+		if (type == null) {
+			return ErrorType.OTHER;
+		}
+		return type;
+	}
+
+	// Paygentエラーコードのハンドリング用Map（徐々にこっちに移行していく）
+	// see also: https://docs.google.com/a/yoshidumi.co.jp/spreadsheet/ccc?key=0AkHrXakVhkjxdEhrSnBnTVloUWpleEhFazAxa01ycFE#gid=0
+	private static final Map<String, PaygentErrorHandlingDto> ERRORS_MAP = new HashMap<>();
+	static {
+		ERRORS_MAP
+				.put("2001", new PaygentErrorHandlingDto("2001", ErrorAction.REINPUT, "paygent.2001"));
+		ERRORS_MAP
+				.put("2002", new PaygentErrorHandlingDto("2002", ErrorAction.REINPUT, "paygent.2002"));
+		ERRORS_MAP
+				.put("2003", new PaygentErrorHandlingDto("2003", ErrorAction.REINPUT, "paygent.2003"));
+		ERRORS_MAP.put("2004", new PaygentErrorHandlingDto("2004", ErrorAction.ERROR, "paygent.2004"));
+		ERRORS_MAP.put("2005", new PaygentErrorHandlingDto("2005", ErrorAction.RETRY, "paygent.2005"));
+		ERRORS_MAP.put("2006", new PaygentErrorHandlingDto("2006", ErrorAction.ERROR, "paygent.2006"));
+		ERRORS_MAP.put("2007", new PaygentErrorHandlingDto("2007", ErrorAction.ERROR, "paygent.2007"));
+		ERRORS_MAP.put("2008", new PaygentErrorHandlingDto("2008", ErrorAction.RETRY, "paygent.2008"));
+		ERRORS_MAP.put("2009", new PaygentErrorHandlingDto("2009", ErrorAction.ERROR, "paygent.2009"));
+		ERRORS_MAP.put("2010", new PaygentErrorHandlingDto("2010", ErrorAction.ERROR, "paygent.2010"));
+		ERRORS_MAP.put("2011", new PaygentErrorHandlingDto("2011", ErrorAction.ERROR, "paygent.2011"));
+		ERRORS_MAP.put("2012", new PaygentErrorHandlingDto("2012", ErrorAction.ERROR, "paygent.2012"));
+		ERRORS_MAP.put("2013", new PaygentErrorHandlingDto("2013", ErrorAction.ERROR, "paygent.2013"));
+		ERRORS_MAP.put("2014", new PaygentErrorHandlingDto("2014", ErrorAction.ERROR, "paygent.2014"));
+		ERRORS_MAP.put("2015", new PaygentErrorHandlingDto("2015", ErrorAction.ERROR, "paygent.2015"));
+		ERRORS_MAP.put("2016", new PaygentErrorHandlingDto("2016", ErrorAction.ERROR, "paygent.2016"));
+		ERRORS_MAP.put("2017", new PaygentErrorHandlingDto("2017", ErrorAction.ERROR, "paygent.2017"));
+		ERRORS_MAP.put("2018", new PaygentErrorHandlingDto("2018", ErrorAction.ERROR, "paygent.2018"));
+		ERRORS_MAP.put("9005", new PaygentErrorHandlingDto("9005", ErrorAction.RETRY, "paygent.9005"));
+		ERRORS_MAP.put("13001",
+				new PaygentErrorHandlingDto("13001", ErrorAction.ERROR, "paygent.13001"));
+		ERRORS_MAP.put("13002",
+				new PaygentErrorHandlingDto("13002", ErrorAction.ERROR, "paygent.13002"));
+		ERRORS_MAP.put("E001", new PaygentErrorHandlingDto("E001", ErrorAction.ERROR, "paygent.E001"));
+		ERRORS_MAP.put("E002", new PaygentErrorHandlingDto("E002", ErrorAction.RETRY, "paygent.E002"));
+		ERRORS_MAP.put("P001", new PaygentErrorHandlingDto("P001", ErrorAction.ERROR, "paygent.P001"));
+		ERRORS_MAP.put("P002", new PaygentErrorHandlingDto("P002", ErrorAction.ERROR, "paygent.P002"));
+		ERRORS_MAP.put("P003", new PaygentErrorHandlingDto("P003", ErrorAction.ERROR, "paygent.P003"));
+		ERRORS_MAP.put("P004", new PaygentErrorHandlingDto("P004", ErrorAction.ERROR, "paygent.P004"));
+		ERRORS_MAP.put("P005", new PaygentErrorHandlingDto("P005", ErrorAction.ERROR, "paygent.P005"));
+		ERRORS_MAP.put("P006", new PaygentErrorHandlingDto("P006", ErrorAction.ERROR, "paygent.P006"));
+		ERRORS_MAP.put("P007", new PaygentErrorHandlingDto("P007", ErrorAction.ERROR, "paygent.P007"));
+		ERRORS_MAP.put("P008", new PaygentErrorHandlingDto("P008", ErrorAction.ERROR, "paygent.P008"));
+		ERRORS_MAP
+				.put("P009", new PaygentErrorHandlingDto("P009", ErrorAction.REINPUT, "paygent.P009"));
+		ERRORS_MAP
+				.put("P010", new PaygentErrorHandlingDto("P010", ErrorAction.REINPUT, "paygent.P010"));
+		ERRORS_MAP
+				.put("P011", new PaygentErrorHandlingDto("P011", ErrorAction.REINPUT, "paygent.P011"));
+		ERRORS_MAP.put("P012", new PaygentErrorHandlingDto("P012", ErrorAction.ERROR, "paygent.P012"));
+		ERRORS_MAP.put("P013", new PaygentErrorHandlingDto("P013", ErrorAction.ERROR, "paygent.P013"));
+		ERRORS_MAP.put("P014", new PaygentErrorHandlingDto("P014", ErrorAction.ERROR, "paygent.P014"));
+		ERRORS_MAP.put("P015", new PaygentErrorHandlingDto("P015", ErrorAction.ERROR, "paygent.P015"));
+		ERRORS_MAP.put("P016", new PaygentErrorHandlingDto("P016", ErrorAction.ERROR, "paygent.P016"));
+		ERRORS_MAP.put("P017", new PaygentErrorHandlingDto("P017", ErrorAction.ERROR, "paygent.P017"));
+		ERRORS_MAP.put("P018", new PaygentErrorHandlingDto("P018", ErrorAction.ERROR, "paygent.P018"));
+		ERRORS_MAP.put("P021", new PaygentErrorHandlingDto("P021", ErrorAction.ERROR, "paygent.P021"));
+		ERRORS_MAP.put("P022", new PaygentErrorHandlingDto("P022", ErrorAction.ERROR, "paygent.P022"));
+		ERRORS_MAP.put("P023", new PaygentErrorHandlingDto("P023", ErrorAction.ERROR, "paygent.P023"));
+		ERRORS_MAP.put("P024", new PaygentErrorHandlingDto("P024", ErrorAction.ERROR, "paygent.P024"));
+		ERRORS_MAP.put("P025", new PaygentErrorHandlingDto("P025", ErrorAction.ERROR, "paygent.P025"));
+		ERRORS_MAP.put("P026", new PaygentErrorHandlingDto("P026", ErrorAction.ERROR, "paygent.P026"));
+		ERRORS_MAP.put("P027", new PaygentErrorHandlingDto("P027", ErrorAction.ERROR, "paygent.P027"));
+		ERRORS_MAP.put("P028", new PaygentErrorHandlingDto("P028", ErrorAction.ERROR, "paygent.P028"));
+		ERRORS_MAP.put("P029", new PaygentErrorHandlingDto("P029", ErrorAction.ERROR, "paygent.P029"));
+		ERRORS_MAP.put("P030", new PaygentErrorHandlingDto("P030", ErrorAction.ERROR, "paygent.P030"));
+		ERRORS_MAP.put("XXXX", new PaygentErrorHandlingDto("XXXX", ErrorAction.ERROR, "paygent.XXXX"));
+	}
+
+	public static enum ErrorAction {
+		RETRY("RETRY"), REINPUT("REINPUT"), ERROR("ERROR");
+		private String errorAction;
+
+		ErrorAction(String errorAction) {
+			this.errorAction = errorAction;
+		}
+
+		public String getErrorAction() {
+			return errorAction;
+		}
+
+		public String getName() {
+			return name();
+		}
+	}
+
+	public static enum ErrorAction4Batch {
+		RETRY("RETRY"), REREGISTER("REREGISTER"), ERROR("ERROR"), VALIDATE("VALIDATE");
+		private String errorAction;
+
+		ErrorAction4Batch(String errorAction) {
+			this.errorAction = errorAction;
+		}
+
+		public String getErrorAction() {
+			return errorAction;
+		}
+
+		public String getName() {
+			return name();
+		}
+	}
+
+	/**
+	 * カード情報登録
+	 *
+	 * @param cardPso
+	 * @param logonTokenPso
+	 * @return
+	 * @throws PaymentException 課金処理が何らかの形で失敗したときに出る例外
+	 */
+	public Map<String, String> registerCard(CardPso cardPso, LogonTokenPso logonTokenPso)
+			throws PaymentException {
+		PaygentEnv env = findEnv();
+
+		// 顧客ＩＤ：LongineのユーザＩＤを設定
+		String longineId = String.valueOf(logonTokenPso.getUser().getUserID());
+		String curTime = DateUtil.getCurrentPaymentDateTime(new Date());
+
+		// "マーチャントID" + "接続ID" + "接続パスワード" + "電文種別ID" + "電文バージョン番号" + "要求日時" +
+		// "電文ハッシュ値生成キー"
+		String hashKey = env.getMerchantId() + env.getConectId() + env.getConnectPassword() + "025"
+				+ env.getTeleVer() + curTime + env.getHashkey();
+		String passKey = DigestUtils.sha256Hex(hashKey);
+
+		// ヘッダ部の編集
+		PaygentB2BModule module = createModule(env, "025");
+		module.reqPut("hc", passKey);
+		module.reqPut("trading_id", null);
+		module.reqPut("payment_id", null);
+		module.reqPut("request_date", curTime);
+
+		// 明細部の編集
+		module.reqPut("customer_id", longineId); // 顧客ID
+		module.reqPut("card_number", cardPso.getCardNo()); // カード番号
+		module.reqPut("card_valid_term", cardPso.getMonth() + cardPso.getYear()); // カード有効期限
+		module.reqPut("card_brand", null); // カードブランド
+		module.reqPut("cardholder_name", cardPso.getName()); // カード名義人
+		module.reqPut("add_info1", null); // 補足情報1
+		module.reqPut("add_info1", null); // 補足情報2
+		module.reqPut("add_info1", null); // 補足情報3
+		module.reqPut("add_info1", null); // 補足情報4
+		module.reqPut("site_id", null); // サイトID
+		// 何をチェックするの？
+		module.reqPut("valid_check_flg", CHECK_FLG); // 有効性チェックフラグ
+
+		LOGGER.info("request to Paygent: registerCard[025]");
+		return doPost(module);
+	}
+
+	/**
+	 * オーソリ請求
+	 *
+	 * @param cardNo
+	 * @param cardValidTerm
+	 * @param cardConfNumber
+	 * @param amount
+	 * @return
+	 * @throws PaymentException 課金処理が何らかの形で失敗したときに出る例外
+	 */
+	public Map<String, String> authori(String cardNo, String cardValidTerm, String cardConfNumber,
+			String amount) throws PaymentException {
+		PaygentEnv env = findEnv();
+
+		String curTime = DateUtil.getCurrentPaymentDateTime(new Date());
+		// 取引ＩＤを作成, 完全にユニックなＩＤ
+		String tradeNo = RandomUtil.createNumAlpha(25);
+
+		// "マーチャントID" + "接続ID" + "接続パスワード" + "電文種別ID" + "電文バージョン番号" + "マーチャント取引ID" +
+		// "決済ID" + "金額" + "要求日時" + "電文ハッシュ値生成キー"
+		String hashKey = env.getMerchantId() + env.getConectId() + env.getConnectPassword() + "020"
+				+ env.getTeleVer() + tradeNo + amount + curTime + env.getHashkey();
+
+		String passKey = DigestUtils.sha256Hex(hashKey);
+
+		PaygentB2BModule module = createModule(env, "020");
+		module.reqPut("trading_id", tradeNo);
+		module.reqPut("request_date", curTime);
+		module.reqPut("hc", passKey);
+
+		module.reqPut("payment_amount", amount); // 決済金額
+		module.reqPut("card_number", cardNo); // カード番号
+		module.reqPut("card_valid_term", cardValidTerm); // カード有効期限
+		module.reqPut("card_conf_number", cardConfNumber); // カード確認番号
+		module.reqPut("payment_class", "10"); // 支払区分
+		module.reqPut("split_count", null); // 分割回数
+		module.reqPut("3dsecure_ryaku", "1"); // 3Dセキュア不要 1 △ 指定なし
+		module.reqPut("3dsecure_use_type", null); // 3Dセキュア利用タイプ
+		module.reqPut("HttpAccept", null); // HttpAccept
+		module.reqPut("HttpUserAgent", null); // HttpUserAgent
+		module.reqPut("term_url", null); // 3-Dセキュア戻り URL
+		module.reqPut("ref_trading_id", null); // 参照マーチャント取引ＩＤ
+		module.reqPut("stock_card_mode", "0"); // カード情報お預りモード
+		module.reqPut("customer_id", null); // 顧客ID
+		module.reqPut("customer_card_id", null); // 顧客カードID
+
+		LOGGER.info("request to Paygent: authori[020]");
+		return doPost(module);
+	}
+
+	public Map<String, String> monthlyPay(String tradeNo, String amount, String customerId,
+			String customerCardId) throws PaymentException {
+		PaygentEnv env = findEnv();
+
+		String curTime = DateUtil.getCurrentPaymentDateTime(new Date());
+		// "マーチャントID" + "接続ID" + "接続パスワード" + "電文種別ID" + "電文バージョン番号" + "マーチャント取引ID" +
+		// "決済ID" + "金額" + "要求日時" + "電文ハッシュ値生成キー"
+		String hashKey = env.getMerchantId() + env.getConectId() + env.getConnectPassword() + "020"
+				+ env.getTeleVer() + tradeNo + amount + curTime + env.getHashkey();
+		String passKey = DigestUtils.sha256Hex(hashKey);
+
+		PaygentB2BModule module = createModule(env, "020");
+		module.reqPut("trading_id", tradeNo);
+		module.reqPut("request_date", curTime);
+		module.reqPut("hc", passKey);
+
+		module.reqPut("payment_amount", amount); // 決済金額
+		module.reqPut("card_number", null); // カード番号
+		module.reqPut("card_valid_term", null); // カード有効期限
+		module.reqPut("card_conf_number", null); // カード確認番号
+		module.reqPut("payment_class", "10"); // 支払区分
+		module.reqPut("split_count", null); // 分割回数
+		module.reqPut("3dsecure_ryaku", "1"); // 3Dセキュア不要 1 △ 指定なし
+		module.reqPut("3dsecure_use_type", null); // 3Dセキュア利用タイプ
+		module.reqPut("HttpAccept", null); // HttpAccept
+		module.reqPut("HttpUserAgent", null); // HttpUserAgent
+		module.reqPut("term_url", null); // 3-Dセキュア戻り URL
+		module.reqPut("ref_trading_id", null); // 参照マーチャント取引ＩＤ
+		module.reqPut("stock_card_mode", "1"); // カード情報お預りモード
+		module.reqPut("customer_id", customerId); // 顧客ID
+		module.reqPut("customer_card_id", customerCardId); // 顧客カードID
+
+		LOGGER.info("request to Paygent: monthlyPay[020]");
+		return doPost(module);
+	}
+
+	/**
+	 * オーソリの後、課金する.正常に終わる場合、今回の課金処理が完了
+	 *
+	 * @param paymentId
+	 * @param tradingId
+	 * @return
+	 * @throws PaymentException 課金処理が何らかの形で失敗したときに出る例外
+	 */
+	public Map<String, String> sale(String paymentId, String tradingId) throws PaymentException {
+		PaygentEnv env = findEnv();
+
+		String curTime = DateUtil.getCurrentPaymentDateTime(new Date());
+
+		String hashKey = env.getMerchantId() + env.getConectId() + env.getConnectPassword() + "022"
+				+ env.getTeleVer() + tradingId + paymentId + curTime + env.getHashkey();
+		String passKey = DigestUtils.sha256Hex(hashKey);
+
+		PaygentB2BModule module = createModule(env, "022");
+		module.reqPut("trading_id", tradingId);
+		module.reqPut("payment_id", paymentId);
+		module.reqPut("request_date", curTime);
+		module.reqPut("hc", passKey);
+
+		LOGGER.info("request to Paygent: sale[022]");
+		return doPost(module);
+	}
+
+	/**
+	 * カード登録をキャンセル
+	 *
+	 * @param user, paymentId(空だとuserのデフォルトを取得)
+	 * @return　Map<String, String> Config.RESULTSTATUS　：　0正常　1異常
+	 * @throws PaymentException 課金処理が何らかの形で失敗したときに出る例外
+	 */
+	public Map<String, String> cardCancel(User user, String paymentId) throws PaymentException {
+		PaygentEnv env = findEnv();
+
+		String curTime = DateUtil.getCurrentPaymentDateTime(new Date());
+
+		// HashKey を生成
+		String hashKey = env.getMerchantId() + env.getConectId() + env.getConnectPassword() + "026"
+				+ env.getTeleVer() + curTime + env.getHashkey();
+		String passKey = DigestUtils.sha256Hex(hashKey);
+
+		// PaygentAPIを初期化
+		PaygentB2BModule module = createModule(env, "026");
+
+		module.reqPut("hc", passKey);
+		// module.reqPut("trading_id", null);
+		module.reqPut("request_date", curTime);
+
+		module.reqPut("customer_id", String.valueOf(user.getUserID())); // 顧客ID
+		if (StringUtil.isEmpty(paymentId)) {
+			paymentId = user.getPaymentId();
+		}
+		module.reqPut("customer_card_id", paymentId);
+
+		LOGGER.info("request to Paygent: cardCancel[026]");
+		return doPost(module);
+	}
+
+	public Map<String, String> cardRefer(User user) throws PaymentException {
+		// LongineIDとpaygentから発行したID両方ともないとnullを返す
+		String longineId = String.valueOf(user.getUserID());
+		// Longineのuserid
+		if (StringUtil.isEmpty(longineId)) {
+			return null;
+		}
+		// paygentから発行したID
+		String customerCardId = user.getPaymentId();
+		if (StringUtil.isEmpty(customerCardId)) {
+			return null;
+		}
+
+		PaygentEnv env = findEnv();
+		String curTime = DateUtil.getCurrentPaymentDateTime(new Date());
+
+		// "マーチャントID" + "接続ID" + "接続パスワード" + "電文種別ID" + "電文バージョン番号" + "要求日時" +
+		// "電文ハッシュ値生成キー"
+		String hashKey = env.getMerchantId() + env.getConectId() + env.getConnectPassword() + "027"
+				+ env.getTeleVer() + curTime + env.getHashkey();
+		String passKey = DigestUtils.sha256Hex(hashKey);
+
+		PaygentB2BModule module = createModule(env, "027");
+		module.reqPut("trading_id", null);
+		module.reqPut("payment_id", null);
+		module.reqPut("request_date", curTime);
+		module.reqPut("hc", passKey);
+
+		module.reqPut("customer_id", longineId); // 顧客ID
+		module.reqPut("customer_card_id", customerCardId); // 顧客カードID
+		module.reqPut("site_id", null); // サイトID
+
+		LOGGER.info("request to Paygent: cardRefer[027]");
+		return doPost(module);
+	}
+
+	/**
+	 * @throws PaymentException
+	 * オーソリ取消
+	 *
+	 * @param cardNo
+	 * @param cardValidTerm
+	 * @param cardConfNumber
+	 * @param amount
+	 * @return
+	 * @throws PaymentException 課金処理が何らかの形で失敗したときに出る例外
+	 */
+	public Map<String, String> authoriCancel(String tradeId, String paymentId)
+			throws PaymentException {
+		PaygentEnv env = findEnv();
+
+		String curTime = DateUtil.getCurrentPaymentDateTime(new Date());
+
+		// キーを生成
+		String hashKey = env.getMerchantId() + env.getConectId() + env.getConnectPassword() + "021"
+				+ env.getTeleVer() + tradeId + paymentId + curTime + env.getHashkey();
+		String passKey = DigestUtils.sha256Hex(hashKey);
+
+		PaygentB2BModule module = createModule(env, "021");
+		module.reqPut("trading_id", tradeId);
+		module.reqPut("payment_id", paymentId);
+		module.reqPut("request_date", curTime);
+		module.reqPut("hc", passKey);
+
+		LOGGER.info("request to Paygent: authoriCancel[021]");
+		return doPost(module);
+	}
+
+	/**
+	 * @throws PaymentException
+	 * オーソリ取消
+	 *
+	 * @param cardNo
+	 * @param cardValidTerm
+	 * @param cardConfNumber
+	 * @param amount
+	 * @return
+	 * @throws PaymentException 課金処理が何らかの形で失敗したときに出る例外
+	 */
+	public Map<String, String> saleCancel(String tradeId, String paymentId) throws PaymentException {
+		PaygentEnv env = findEnv();
+
+		String curTime = DateUtil.getCurrentPaymentDateTime(new Date());
+
+		// キーを生成
+		String hashKey = env.getMerchantId() + env.getConectId() + env.getConnectPassword() + "022"
+				+ env.getTeleVer() + tradeId + paymentId + curTime + env.getHashkey();
+		String passKey = DigestUtils.sha256Hex(hashKey);
+
+		PaygentB2BModule module = createModule(env, "022");
+		module.reqPut("trading_id", tradeId);
+		module.reqPut("payment_id", paymentId);
+		module.reqPut("request_date", curTime);
+		module.reqPut("hc", passKey);
+
+		LOGGER.info("request to Paygent: saleCancel[022]");
+		return doPost(module);
+	}
+
+	public Map<String, String> checkStatus(String tradeId, String paymentId) throws PaymentException {
+		PaygentEnv env = findEnv();
+
+		String curTime = DateUtil.getCurrentPaymentDateTime(new Date());
+
+		// キーを生成
+		String hashKey = env.getMerchantId() + env.getConectId() + env.getConnectPassword() + "094"
+				+ env.getTeleVer() + tradeId + curTime + env.getHashkey();
+		LOGGER.info("hashKey : " + hashKey);
+		String passKey = DigestUtils.sha256Hex(hashKey);
+
+		PaygentB2BModule module = createModule(env, "094");
+
+		module.reqPut("trading_id", tradeId);
+		//module.reqPut("payment_id", paymentId);
+		module.reqPut("request_date", curTime);
+		module.reqPut("hc", passKey);
+
+		LOGGER.info("request to Paygent: checkStatus[094]");
+		return doPost(module);
+	}
+
+	private PaygentB2BModule createModule(PaygentEnv env, String telegramKind)
+			throws PaymentException {
+		try {
+			PaygentB2BModule module = new PaygentB2BModule();
+
+			// ヘッダー部を編集
+			module.reqPut("merchant_id", env.getMerchantId());
+			module.reqPut("connect_id", env.getConectId());
+			module.reqPut("connect_password", env.getConnectPassword());
+			module.reqPut("telegram_kind", telegramKind);
+			module.reqPut("telegram_version", env.getTeleVer());
+			return module;
+		} catch (PaygentB2BModuleException e) {
+			LOGGER.info("module initialize error. code=[" + e.getCode() + "]/[" + e.getMessage() + "]");
+			PaymentException ex = new PaymentException(e);
+			ex.put(Config.RESPONSECODE, e.getCode());
+			throw ex;
+		}
+	}
+
+	private Map<String, String> doPost(PaygentB2BModule module) throws PaymentException {
+		try {
+			// 登録送信
+			module.post();
+		} catch (PaygentB2BModuleConnectException e) {
+			// コネクションエラーは課金例外を出し、ロールバックさせて再実行に備え、エラーとする
+			LOGGER.info("connection error. code=[" + e.getCode() + "]/[" + e.getMessage() + "]");
+			PaymentException ex = new PaymentException(e);
+			ex.put(Config.RESPONSECODE, e.getCode());
+			throw ex;
+		} catch (PaygentB2BModuleException e) {
+			// コネクションエラーは課金例外を出し、ロールバックさせて再実行に備え、エラーとする
+			LOGGER.info("module initialize error. code=[" + e.getCode() + "]/[" + e.getMessage() + "]");
+			PaymentException ex = new PaymentException(e);
+			ex.put(Config.RESPONSECODE, e.getCode());
+			throw ex;
+		}
+
+		// 結果を取得
+		if (!module.hasResNext()) {
+			// 結果がない場合は根本的なエラー。使用方法が間違っていると思われるので、例外
+			LOGGER.info("module has no next.");
+			throw new PaymentException();
+		}
+
+		try {
+			// 結果が取得できたら、結果マップをそのまま返す。変な詰め替えは行わない
+			@SuppressWarnings("unchecked")
+			Map<String, String> map = module.resNext();
+
+			// moduleのステータスを詰め込む
+			String status = module.getResultStatus();
+			map.put(Config.RESULTSTATUS, status);
+			map.put(Config.RESPONSECODE, module.getResponseCode());
+			map.put(Config.RESPONSEDETAIL, module.getResponseDetail());
+
+			if (!PROCESS_IS_SUCCESS.equals(status)) {
+				// エラーがあったら例外
+				PaymentException e = new PaymentException();
+				LOGGER.info("RESULTSTATUS:" + status);
+				LOGGER.info("RESPONSECODE:" + map.get(Config.RESPONSECODE));
+				LOGGER.info("RESPONSEDETAIL:" + map.get(Config.RESPONSEDETAIL));
+				e.addAll(map);
+				throw e;
+			}
+			return map;
+		} catch (PaygentB2BModuleException e) {
+			LOGGER.info("data catch error. code=[" + e.getCode() + "]/[" + e.getMessage() + "]");
+			PaymentException ex = new PaymentException(e);
+			ex.put(Config.RESPONSECODE, e.getCode());
+			throw ex;
+		}
+	}
+
+	private PaygentEnv findEnv() throws PaymentException {
+		// SystemSettingsから接続情報を取得
+		PaygentEnv env = getSystemSettingsForPaygentEnv();
+		if (env == null) {
+			// envが取得できなかった場合、設定ミスなので例外を出し、すぐに知りたい。よって課金例外を出し、ロールバックさせてエラーとする
+			LOGGER.info("system-settings is not found.");
+			throw new PaymentException();
+		}
+		/**
+		 * 好ましくないLoggingなのでコメントアウトしておく。
+
+		LOGGER.info(env.getMerchantId() + "|" + env.getConectId() + "|" + env.getConnectPassword()
+				+ "|" + env.getTeleVer());
+		 */
+
+		return env;
+	}
+
+	private PaygentEnv getSystemSettingsForPaygentEnv() {
+		PaygentEnv env = new PaygentEnv();
+		SystemSettings systemSettings = systemSettingsLogic.find();
+		if (systemSettings == null) {
+			return null;
+		}
+		env.setMerchantId(systemSettings.getMerchantId());
+		env.setConectId(systemSettings.getConnectId());
+		env.setConnectPassword(systemSettings.getConnectPassword());
+		env.setTeleVer(systemSettings.getTeleVer());
+		env.setHashkey(systemSettings.getHashkey());
+
+		if (env.getMerchantId() == null || env.getConectId() == null
+				|| env.getConnectPassword() == null || env.getTeleVer() == null) {
+			return null;
+		}
+		return env;
+	}
+
+	/**
+	 * Paygentからの応答電文のレスポンスコードをハンドリングする。
+	 * 
+	 * @param map 応答電文
+	 * @return エラーハンドリング情報
+	 */
+	public PaygentErrorHandlingDto handlingError(Map<String, String> map) {
+		PaygentErrorHandlingDto dto = ERRORS_MAP.get(map.get(Config.RESPONSECODE));
+		if (dto == null) {
+			dto = ERRORS_MAP.get("XXXX");
+		}
+		return setMessage(dto, map.get(Config.RESPONSEDETAIL));
+	}
+
+	/**
+	 * Paygentからの応答電文のレスポンスコードをハンドリングする。
+	 * @param pe 例外
+	 * @return エラーハンドリング情報
+	 */
+	public PaygentErrorHandlingDto handlingError(PaymentException pe) {
+		PaygentErrorHandlingDto dto = ERRORS_MAP.get(pe.get(Config.RESPONSECODE));
+		if (dto == null) {
+			dto = ERRORS_MAP.get("XXXX");
+		}
+		return setMessage(dto, pe.get(Config.RESPONSEDETAIL));
+	}
+
+	private PaygentErrorHandlingDto setMessage(PaygentErrorHandlingDto dto, String responseDetail) {
+		// パラメータ付きのメッセージを処理
+		if ("P009".equals(dto.getCode())) {
+			String item = findItemName(responseDetail);
+			dto.setMessage(ApplicationMessage.get(dto.getMessageCode(), new Object[] { item }));
+
+		} else if ("P010".equals(dto.getCode())) {
+			String item = findItemName(responseDetail);
+			dto.setMessage(ApplicationMessage.get(dto.getMessageCode(), new Object[] { item }));
+
+		} else {
+			dto.setMessage(ApplicationMessage.get(dto.getMessageCode()));
+		}
+
+		return dto;
+
+	}
+
+	// 応答電文中の項目名称
+	private static final List<String> responseDetailItems = new ArrayList<>();
+	static {
+		responseDetailItems.add("card_number");
+		responseDetailItems.add("card_valid_term");
+		responseDetailItems.add("cardholder_name");
+	}
+
+	// 応答電文中項目名と画面入力項目名のマップ
+	private static final Map<String, String> itemMap = new HashMap<>();
+	static {
+		itemMap.put("card_number", "カード番号");
+		itemMap.put("card_valid_term", "カード有効期限");
+		itemMap.put("cardholder_name", "カード名義人");
+	}
+
+	// 応答電文中の項目名称をユーザフレンドリーなものに変換。
+	private String findItemName(String s) {
+		if (s == null) {
+			return "";
+		}
+
+		for (String item : responseDetailItems) {
+			if (s.indexOf(item) != -1) { // 見つかった
+				return itemMap.get(item);
+			}
+		}
+		return "";
+	}
+
+	public String getSystemErrorMessage() {
+		return ApplicationMessage.get("paygent.XXXX");
+	}
+
+	public void setSystemSettingsLogic(SystemSettingsLogic systemSettingsLogic) {
+		this.systemSettingsLogic = systemSettingsLogic;
+	}
+
+}

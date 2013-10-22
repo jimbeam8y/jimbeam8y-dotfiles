@@ -1,0 +1,89 @@
+@rem ========================================================================
+@rem   シグマバッチ共通環境変数定義スクリプト
+@rem   Version:1.0
+@rem ========================================================================
+@rem                   吉積情報株式会社
+@rem ========================================================================
+
+@rem ------------------------------------------------
+@echo off
+
+@rem SIGMA_HOME変数--------------------------------
+set SIGMA_HOME=E:\Work\kawano\SIGMA_BATCH_HOME
+
+@rem PATH変数-----------------------------------------
+set PATH=%PATH%;%SIGMA_HOME%\batch\common\env
+set PATH=%PATH%;%SIGMA_HOME%\batch\common\invoke
+set PATH=%PATH%;%SIGMA_HOME%\batch\common\tool
+
+
+@rem CLASSPATH変数------------------------------------
+set CLASSPATH=.;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/classes;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/activation.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/aopalliance-1.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/commons-beanutils-1.7.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/commons-chain-1.1.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/commons-codec-1.3.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/commons-collections-3.1.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/commons-digester-1.8.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/commons-discovery.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/commons-httpclient-3.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/commons-io-1.1.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/commons-jexl-1.0-dev.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/commons-logging-1.1.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/commons-validator-1.3.1.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/geronimo-ejb_3.0_spec-1.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/geronimo-jta_1.1_spec-1.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/javassist-3.4.ga.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/jdom.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/log4j-1.2.13.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/mail.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/mysql-connector-java-5.1.3-rc-bin.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/ognl-2.6.9-patch-20070624.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/oro-2.0.8.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/saaj.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/sac.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/saxon-6.5.3-lz-p1.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/standard.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/stax-1.2.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/stax-api-1.0.1.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/struts-core-1.3.8.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/struts-taglib-1.3.8.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/struts-tiles-1.3.8.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/xstream-1.2.2.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/dom4j-1.6.1.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/s2-extension-2.4.17.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/s2-framework-2.4.17.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/s2-struts-1.3.0-RC2.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/s2-struts-tiger-1.3.0-RC2.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/s2-tiger-2.4.14.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/s2-dao-tiger-1.0.47.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/s2-dao-1.0.47.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/gdata-appsforyourdomain-1.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/gdata-appsforyourdomain-meta-1.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/gdata-base-1.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/gdata-client-1.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/gdata-client-meta-1.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/gdata-contacts-1.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/gdata-contacts-meta-1.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/gdata-core-1.0.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/xmldsig.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/xmlsec.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/yoshidumi-core.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/yoshidumi-core-props.jar;
+set CLASSPATH=%CLASSPATH%%SIGMA_HOME%/lib/tokyu-hands.jar;
+
+
+@rem VM用変数-----------------------------------------
+set VM_ARGS=
+set VM_ARGS=%VM_ARGS% -Dtest=test
+
+@rem VMヒープサイズ-----------------------------------
+set MEM_ARGS=-Xms512m -Xmx512m
+rem set PROF_ARGS=-Xrunhprof:heap=sites,file=sites.txt
+
+
+@rem バッチ終了コマンド--------------------------------
+set EXCMD=exit
+set EXNRCMD=exit /b

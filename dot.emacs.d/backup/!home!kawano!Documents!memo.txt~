@@ -1,0 +1,57 @@
+
+
+http://localhost:8888/userConfirm!register?vercode=745DE7E646D73CB6E95D3AC0E3283E011EFA314122
+
+
+mysql -u root -p -h 192.168.1.13 -P 13306
+
+
+
+CPU:Intel® Core™ i5-2500K CPU @ 3.30GHz × 4
+MEM:3.6G
+32bit OS(Ubuntu 11.10)
+
+java 1.7.0_11 (割り当てメモリ2G)
+
+
+
+
+
+
+
+複数スレッドによるContacts API発行の制限数について
+
+Contacts APIを使って、複数アカウントの連絡帳を更新するアプリケーションを開発しています。
+認証はドメイン管理者による2LOです。
+1スレッド1アカウント処理する形で、複数スレッド実行をして処理時間を短縮できないか考えています。
+
+この場合の同時に発行できるAPI数の制限などはありますでしょうか？
+
+
+
+
+
+
+key: Yoshidumi-Win2008temp
+value: kawano temp
+
+Administrator
+.LLu=7=c?r
+
+
+tyoshi-test.appspot.com/config-license
+
+
+
+StringReader in = new StringReader(bin);
+ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+// 2文字で1バイトなわけなので2文字ずつ読む
+char[] buff = new char[2];
+
+int read = 0;
+while ((read = in.read(buff)) > 0) {
+    out.write(Integer.parseInt(String.valueOf(buff), 16));
+}
+// ここは元文字列のエンコーディングを指定する
+System.out.println(new String(out.toByteArray(), "UTF-8"));

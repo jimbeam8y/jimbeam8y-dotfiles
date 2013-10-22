@@ -1,0 +1,148 @@
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--[if lt IE 7]><html class="ie ie6" lang="ja"><![endif]-->
+<!--[if IE 7]><html class="ie ie7" lang="ja"><![endif]-->
+<!--[if IE 8]><html class="ie ie8" lang="ja"><![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!-->
+<html lang="ja">
+<!--<![endif]-->
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Longine（ロンジン）</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<jsp:include page="stylesheet.jsp" />
+<link rel="stylesheet" href="/css/pc/nisa.css">
+<script src="/js/pc/jquery-1.9.1.min.js"></script>
+<script src="/js/pc/jquery.cookie.js"></script>
+<script src="/js/pc/jquery.masonry.min.js"></script>
+<script src="/js/pc/jquery.imagesloaded.js"></script>
+<script src="/js/pc/jquery.equalheights.js"></script>
+<script src="/js/pc/jquery.ah-placeholder.js"></script>
+<script src="/js/pc/jquery.scrollUp.min.js"></script>
+<script src="/js/pc/jquery.colorbox-min.js"></script>
+<script src="/js/pc/minimalSharer.js"></script>
+<script src="/js/pc/common.js"></script>
+<script src="/js/longine.js"></script>
+
+<!-- Google Analytics Content Experiment code -->
+<script>function utmx_section(){}function utmx(){}(function(){var
+k='73245957-1',d=document,l=d.location,c=d.cookie;
+if(l.search.indexOf('utm_expid='+k)>0)return;
+function f(n){if(c){var i=c.indexOf(n+'=');if(i>-1){var j=c.
+indexOf(';',i);return escape(c.substring(i+n.length+1,j<0?c.
+length:j))}}}var x=f('__utmx'),xx=f('__utmxx'),h=l.hash;d.write(
+'<sc'+'ript src="'+'http'+(l.protocol=='https:'?'s://ssl':
+'://www')+'.google-analytics.com/ga_exp.js?'+'utmxkey='+k+
+'&utmx='+(x?x:'')+'&utmxx='+(xx?xx:'')+'&utmxtime='+new Date().
+valueOf()+(h?'&utmxhash='+escape(h.substr(1)):'')+
+'" type="text/javascript" charset="utf-8"><\/sc'+'ript>')})();
+</script><script>utmx('url','A/B');</script>
+<!-- End of Google Analytics Content Experiment code -->
+
+</head>
+<body>
+	<div id="wrapper" class="home">
+		<jsp:include page="longine_header.jsp" />
+		<div id="content" class="cf">
+			<div class="article-single">
+				<div class="article-content">
+					<div class="text-center">
+						<h1 class="ribbon">先着100名様にNISAムックが当たるキャンペーン開催中！！</h1>
+					</div>
+
+					<div class="caption align-right" style="width: 340px;">
+						<img src="/img/pc/nisa/NISA-mook.png"
+							alt="日経ムック NISA(少額投資非課税制度)120%活用術! ―タイプ別・お得なプラン付き [ムック]" />
+						<p class="caption-text">
+							日経ムック NISA(少額投資非課税制度)120%活用術! <br />― タイプ別・お得なプラン付き [ムック]
+						</p>
+					</div>
+
+					<h2>キャンペーン概要</h2>
+					<p>Longine（ロンジン）をTwitterやFacebookで友達に紹介いただいた方に（先着100名様限定）、9月13日発売の日経ムック
+						『NISA（少額投資非課税制度）120％活用術！』（定価840円）をプレゼントいたします！このムックは、NISAについて分かり易く説明されており、なんとLongineも登場します。
+					</p>
+
+					<h2>キャンペーン期間</h2>
+					<p>2013年9月17日〜10月17日までのツイート、または、フェイスブックコメントが対象です。</p>
+
+					<h2>キャンペーン参加方法</h2>
+					<p>プレゼントの応募は3ステップ！ 以下のいずれかの方法でお申込みください。</p>
+
+					<br />
+
+					<h3>1. ツイッターを使って応募する</h3>
+
+					<div class="round-tweet">
+
+						<h2>Step1. フォローしよう</h2>
+						<p>
+							『フォローボタン』からLongineアカウント（@longine_tw）をフォローしましょう！ <a href="https://twitter.com/longine_tw" class="twitter-follow-button" data-show-count="false" data-lang="ja" data-size="large">@longine_twさんをフォロー</a>
+							<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+						</p>
+						<h2>Step2. ツイートしよう</h2>
+						<p>
+							『ツイートボタン』から、キャンペーン文言をツイートしましょう！ <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.longine.jp" data-text="日本株の長期投資ならLongine（ロンジン）。10月からNISA特集も始まります！" data-via="longine_tw" data-lang="ja" data-size="large">ツイート</a>
+							<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+						</p>
+						<h2>Step3. レポートしよう</h2>
+						<p>
+							<a
+								href="https://docs.google.com/forms/d/19OHXsKj0P48TjJVO7wEJgH7TgY64ksmfxpCOiQjjQu0/viewform"
+								target="_blank">こちら</a>のフォームから必要事項（氏名、送付先、ツイートのURL）を入力しましょう！
+						<p>
+					</div>
+
+					<br />
+
+					<h3>2. フェイスブックを使って応募する</h3>
+
+					<div class="round-fb">
+						<h2>Step1. いいね！しよう</h2>
+						<p>
+							『いいねボタン』から、facebookのLongineページを『いいね！』しましょう！
+							<iframe
+								src="//www.facebook.com/plugins/likebox.php?href=https%3A%2F%2Fwww.facebook.com%2Flongine.jp&amp;width=300&amp;height=62&amp;colorscheme=light&amp;show_faces=false&amp;header=false&amp;stream=false&amp;show_border=false&amp;appId=398629163531757"
+								scrolling="no" frameborder="0"
+								style="border: none; overflow: hidden; width: 300px; height: 63px; vertical-align: middle;"
+								allowTransparency="true"></iframe>
+						</p>
+						<h2>Step2. シェアしよう</h2>
+						<p>
+							『いいねボタン』から、キャンペーン文言（<b>『日本株の長期投資ならLongine（ロンジン）。10月からNISA特集も始まります！』</b>）を投稿しましょう！
+						</p>
+						<iframe
+							src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.longine.jp%2F&amp;width=450&amp;height=35&amp;colorscheme=light&amp;layout=standard&amp;action=like&amp;show_faces=false&amp;send=false&amp;appId=398629163531757"
+							scrolling="no" frameborder="0"
+							style="border: none; overflow: hidden; width: 450px; height: 35px;"
+							allowTransparency="true"></iframe>
+						<h2>Step3. レポートしよう</h2>
+						<p>
+							<a
+								href="https://docs.google.com/forms/d/19OHXsKj0P48TjJVO7wEJgH7TgY64ksmfxpCOiQjjQu0/viewform"
+								target="_blank">こちら</a>のフォームから必要事項（氏名、送付先、投稿URL）を入力しましょう！公開範囲は『全体』に変更したのち、ご報告をお願いいたします。
+
+						
+						<p>
+					</div>
+					<p>皆様の応募をお待ちしております！</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<jsp:include page="longine_footer.jsp" />
+
+<script type="text/javascript">
+(function($){
+	$(function() {
+		$('.masonry').masonry({
+			itemSelector: '.box'
+		});
+	});
+})(jQuery);
+</script>
+</body>
+</html>

@@ -1,0 +1,795 @@
+
+============================================================
+
+TaskQueue　←バッチ系
+　まさにQueue。
+　非同期多重実行用のキューイングの仕組み。
+　いざなみであればactionを非同期に動かすため。
+
+　FrontEndsをたたくことができる。（時間制限が１０分に延長される）
+
+
+Backends　←バッチ系
+　非対話型用
+　ブラウザから起動もできるただのaction。
+　　→その場合６０秒制限がかかる。
+　ただし、TaskQueueを経由して起動すると時間無制限。
+　ところが以下の制限がある。
+　SLAがない＝つまり勝手に中断されることがある。
+　処理に時間がかかっていてその間のRPC（※１）がないと暴走プロセスと判断されることがよくある。
+　またはRPCが多すぎる（同時リクエスト数）と同じように暴走プロセスと判断されることがよくある。
+　（※１）URL Fetch(いわゆるGoogle系API）
+　　　　　DatastoreのRead/Write
+　　　　　Logging
+　
+
+FrontEnds　←画面
+　対話型のリクエストを受けるために使われるもの。
+　６０秒制限あり
+
+
+
+============================================================
+
+
+Long id
+User from
+User to
+String fromHash
+String inviteCode(index)
+Text message(unindex)
+Date firstAcessDate(unindex)
+Date userRegistDate(unindex)
+Date cardRegistDate(unindex)
+
+
+============================================================
+
+
+jp.co.navipla.longine.controller.FacebookLoginAction facebookLoginCallback: {"error":{"message":"redirect_uri isn't an absolute URI. Check RFC 3986.","type":"OAuthException","code":191}}
+
+FacebookException [statusCode=400, response=HttpResponse{statusCode=400, responseAsString='{"error":{"message":"redirect_uri isn't an absolute URI. Check RFC 3986.","type":"OAuthException","code":191}}
+', is=java.io.ByteArrayInputStream@c2c455, streamConsumed=true}, errorType=OAuthException, errorMessage=redirect_uri isn't an absolute URI. Check RFC 3986., errorCode=191]
+	at facebook4j.internal.http.HttpClientImpl.request(HttpClientImpl.java:189)
+	at facebook4j.internal.http.HttpClientWrapper.request(HttpClientWrapper.java:65)
+	at facebook4j.internal.http.HttpClientWrapper.get(HttpClientWrapper.java:97)
+	at facebook4j.auth.OAuthAuthorization.getOAuthAccessToken(OAuthAuthorization.java:94)
+	at facebook4j.FacebookBaseImpl.getOAuthAccessToken(FacebookBaseImpl.java:227)
+	at jp.co.navipla.longine.controller.FacebookLoginAction.getFacebookUserFromCode(FacebookLoginAction.java:49)
+	at jp.co.navipla.longine.controller.FacebookLoginAction.facebookLoginCallback(FacebookLoginAction.java:86)
+
+
+
+Caused by: com.google.appengine.api.datastore.PreparedQuery$TooManyResultsException
+        at org.slim3.datastore.ModelQuery.asSingle(ModelQuery.java:347)
+        at jp.co.navipla.longine.dao.impl.UserDaoImpl.selectByEmail(UserDaoImpl.java:22)
+        at jp.co.navipla.longine.logic.UserLogic.isValidUser(UserLogic.java:201)
+        at jp.co.navipla.longine.controller.UserConfirmAction.registerOauth(UserConfirmAction.java:158)
+
+
+
+============================================================
+
+吉積さん：
+
+本番のdaily-reportの数が合わない件です。
+https://ydj.backlog.jp/view/WMLJ-449
+
+ID:29
+　このユーザはオープン時に登録しています。
+　なぜかは不明ですが、ライセンスレコードがありません。
+　初期のユーザなのでカード操作履歴もないのでわかりませんが、カードの登録はしていない模様です。
+　このユーザに別途ご案内をして一度退会してもらって再度登録をお願いするのが一番いいと思います。
+　支払い履歴は課金処理中でとまった状態になっていて課金エラーとなっています。
+　これはデータを書き換える必要があります。
+　課金不可にするか、カード未登録にするかです。
+　（カード未登録にするのがいいとは思いますが）
+
+ID:565
+　メアドから判断するとおそらく原田さんと思われます。
+　ライセンスは9/1で切れています。
+　課金に失敗した状態で止まっているようです。
+　データの書き換えは、カード未登録にするのがいいと思われます。
+
+ID:632
+　先週のユーザ区分の対応をリリースした時に作った川野の招待ユーザです。
+　カードが登録されていないのに課金するバッチのバグにより課金に失敗する形で残っていました。
+　支払い履歴をゲストのものに書き換えます。
+
+書き換えの許可をお願いします。
+
+============================================================
+
+
+-偶数行の背景を、薄い青か緑にして視認性をあげてください。
+-License End TimeとNext Trade Dateの背景色をピンク系にしてください。
+-項目の表示方法を変え視認性をあげます。
+--以下の項目は幅を小さくしても問題ないので適切な幅を指定してください。
+---UserId
+---Purchase Header Id
+--日付は折り返さないように幅を適切にしてください。
+--画面の設計書通り、一行で表示するようにしてください。
+https://docs.google.com/a/yoshidumi.co.jp/spreadsheet/ccc?key=0AkHrXakVhkjxdGdtcTdkVHZmZUVnajE4amQxOUFtRXc#gid=0
+　
+
+============================================================
+
+泉田さん
+
+今朝、原稿をアップした際にエラーが多発していたようです。
+
+ZIPファイルからのファイル取り出しで失敗しているようなエラーだったのです
+が、どのような手順で起きたのか、なにをアップロードしたのか教えていだた
+けますか？
+
+エラーを適切なエラーメッセージ化することで、早期に間違いに気付けると考えます。
+
+
+
+============================================================
+2013/08/28 24:00の定期課金に失敗しています。
+原因は事故カードでユーザ対応をお願いしています。
+
+履歴から判断するとその後カードを変更されておりますし、その日の定期課金で
+正常に処理がされています。
+またライセンスには矛盾は見られませんので、ログインをきちんとすればみれるはずです。
+
+
+
+
+============================================================
+SELECT * FROM PurchaseHeader where paymentStatusName='VALID'
+AND amount = null AND paymentId = null AND processStatus = null
+
+SELECT * FROM PurchaseHeader where paymentStatusName='VALID'
+AND amount = null AND paymentId != null
+
+
+============================================================
+
+
+
+ペイジェントテクニカルサポート
+徳田様：
+
+ご回答ありがとうございます。
+ではそのように対応をとります。
+
+ありがとうございました。
+
+============================================================
+ペイジェントテクニカルサポート
+徳田様：
+
+ご回答ありがとうございます。
+
+こちらで確認して、ユーザ情報を特定致します。
+
+ところで、この顧客IDがnullで登録された情報を、本来の顧客IDに
+書き換えることは対応可能でしょうか？
+
+
+============================================================
+ペイジェントテクニカルサポート
+徳田様：
+
+ご回答ありがとうございます。
+
+顧客IDにnullを指定するのは意図しない動作でした。
+
+既にnullで登録された５件の顧客カードIDはわかりますでしょうか？
+
+
+============================================================
+ペイジェントテクニカルサポート
+徳田様：
+
+ご回答ありがとうございます。
+
+該当ユーザは、まだ一度もカード登録が成功していません。
+（始めてもカード登録でこのエラーが発生した模様）
+
+ですのでこのケースではご回答内容では解決に至らないと思います。
+
+もう少し別の観点で調査をお願いできますでしょうか？
+
+
+============================================================
+tech-support@paygent.co.jp
+
+石川様：
+システムご担当者様：
+
+吉積情報の川野です。
+
+前任者、趙さんから引継ぎました。
+よろしくお願いします。
+
+さっそくですが、本番環境にて以下の事象が発生しております。
+
+2013/9/5 23:49
+RESULTSTATUS:1
+RESPONSECODE:P023
+RESPONSEDETAIL:カード情報がすでに上限数登録済みです。
+
+これ以降カード登録ができない状態です。
+
+試験環境ではないので発生しえないと考えていましたが、いったい
+なにが起きているのでしょうか？
+
+調査のほどよろしくお願い致します。
+
+============================================================
+RSS
+
+
+<title>Longine</title>
+<link>https://www.longine.jp</link>
+<description>Longineの新着レポートを配信します。</description>
+<language>ja</language>
+<copyright>(c) 2013 Longine</copyright>
+<pubDate>Fri, 30 Aug 2013 06:00:00 GMT</pubDate>
+<dc:date>2013-08-30T06:00:00Z</dc:date>
+<dc:language>ja</dc:language>
+<dc:rights>(c) 2013 Longine</dc:rights>
+
+
+
+============================================================
+
+レポート
+ 161
+ 152
+ 150
+ 149
+ 148
+
+推奨銘柄
+ 問題なし
+
+イベント
+ 問題なし
+
+機関投資家
+ 問題なし。
+
+
+============================================================
+
+【stylesheet.jsp】
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<link rel="stylesheet" href="/css/pc/common.css">
+<link rel="stylesheet" href="/css/pc/home.css">
+・・・（共通で使うCSSを指定する）
+
+【javascript.jsp】
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<script src="/js/pc/jquery-1.9.1.min.js"></script>
+・・・（共通で使うJSを指定する）
+
+【個別のJSP】
+<head>
+<meta>
+<title>
+<jsp:include page="stylesheet.jsp" />  ←ここでincludeする。
+<link rel="stylesheet" href="/css/pc/normalize.css">  ←そのページ固有で使うものは個別で指定
+<jsp:include page="javascript.jsp" />  ←ここでincludeする。
+<script src="js/pc/hogehoge.js"></script> ←個別分
+
+
+【CSSやJSを修正した場合】
+<link rel="stylesheet" href="/css/pc/home2.css">
+などとして数字をあげてファイル名を変える。
+
+ファイル名の変更は、Eclipseで CSS(JS)ファイルを選択→右クリック→Rename...で行う。
+古いのがdelete、新しいのがnewでSubversion操作が行われる。
+コミット忘れが起きないようプロジェクトの階層でcommitを行い、一括コミットをすること。
+
+
+
+
+============================================================
+
+izanami
+
+setup()
+
+CreatorUtil / setter injectionしてくれる。
+
+MockLogicをセットする
+
+
+
+
+============================================================
+
+2. システム　自動で社名コードを補完　例　SONY(xxxx)
+3. システム　自動で社名とコードに社名リンクを生成
+5. ユーザ　社名をクリックすると，社名ページ(検索結果と同じ)を閲覧可能
+
+
+編集時:
+会社名を赤色にしてください。
+
+システム：
+　1. 保存時、赤の<SPAN>を検出。
+　　例） <span style='color:red'>社名</span>
+　2. "社名"で、Companyを検索しコードを取得。
+　　見つからない場合：要検討。
+  3. 以下のリンクに置換。
+　　<a href=/archive!searchByCompany?p=XXXX>社名(XXXX)</a>
+     ※p はパラメータ名
+
+
+
+============================================================
+search: 7203
+      : トヨタ自動車
+
+87 REPORT
+85 REPORT
+73 REPORT
+64 REPORT
+58 INVESTER
+21 EVENT
+----- 
+31 INVESTER
+20 REPORT
+25 REPORT
+============================================================
+
+
+https://www.longine.jp/admin/monthly-pay-check?date=20130730000000
+
+============================================================
+
+ContentsReadLogLogic 24行目、@SuppressWarningしてないのですが、そもそもHashMapがよいのかどうか…Dtoなどにしたほうがデータ構造がわかりやすくなり、ソースが見やすくなるはずです。
+
+
+============================================================
+
+・新規登録時、カード重複（過去に一度登録したことがある場合）は即時決済を行う。
+　CardRegisterHistoryをカード番号で検索し1件でもあった場合をこの状態とする。
+　（※既存実装）
+　try {
+　　beginTx
+　　　1. Paygent：カード登録
+　　　2. Longine: Userの顧客IDを更新
+　 　　※ここまではカード新規登録と同じ処理
+　　　3. Paygent：オーソリ発行
+　　　4. Paygent：売上発行
+　　　 ※ここは単品購入と同じ処理
+　　　　　1, 3, 4はリトライ可能なものはmethod内でリトライする
+
+　　　5. Longine: PurchaseHeaderに登録
+　　　　nextPayment :1ヶ月後の同じ日 00:00:00
+　　　　tradeDate   :now
+　　　6. Longine: MagazineLicenseの期限を以下で登録
+　　　　既にレコードがあった場合は更新。そうでなければinsert。
+　　　　　start date: now
+　　　　　end date  : 1ヶ月後+1日 00:00:00
+　　　7. Longine: CardRegisterHistoryに登録
+　　　8. CardOperateLog挿入
+　　　　※5,6,7,8でレコード操作でエラーの場合
+　　　　　ImmediatePaymentExceptionを投げる
+　　tx.commit
+　　　9. メール送信
+　　　　※文面を変更する必要があります。
+　　　　　無料期間がないので。
+　　→画面SUCCESS
+　} catch(PaymentException) {
+　　tx.rollback
+　　1. Longine: CardOperateLogをエラー発生で挿入
+　　→画面エラー
+　} catch(ImmediatePaymentException) {
+　　tx.rollback
+　　1. Paygent: 売上をキャンセルする
+　　2. Longine: CardOperateLogをエラー発生で挿入
+　　→画面エラー
+　}
+
+※3, 4, 5, 6はLogicとして切り出す。
+
+　
+
+PaymentExceptionは、1, 2, 3, 4までしか発生しませんよね？
+4の時は例外ではなく、return codeみて売上失敗の場合はオーソリ取り消しをします。
+（既存の単品購入のロジックと同じ）
+
+なので、売上をキャンセルする必要があるのは、今回新規で作成する
+ImmediatePaymentException（5,6,7,8でエラー）になった場合に
+売上をキャンセルする必要がある、という設計にしました。
+
+PaymentExceptionでもCardOperateLogをエラー発生で挿入するのは賛成です、
+変更します。
+
+
+============================================================
+[調査依頼の結果]
+2013/07/29 09:33:51 に会員登録をしていますが、カードの登録をしていないようです。
+ですので、無料お試しもない状態です。
+
+単品購入はhttps://www.longine.jp/abstract?id=98を買ったようです。
+単品購入の際にメールを飛ばしていますが、テンプレートをみるとタイトルしか
+ないもののようです。
+single-buy.tpl
+ですが、タイトルの他には、フッタなどもないもののようです。
+これはまずいかもしれません。
+
+
+============================================================
+
+[イメージの確認]
+
+https://kawano-dot-np-longine-stg.appspot.com/admin/demo-upload-file!detailsImg?imgId=53
+
+
+============================================================
+[mail]
+
+原田様：
+
+> 編集部おすすめ：
+> ハイパーリンクで「オムロン」という名前は表示しないようにしてください。
+> 「和泉美治の推奨銘柄（長期投資）」としてください。
+> http://gyazo.com/3b594b3358c5ea2331768f7d377fa1b4
+
+修正しました。
+
+
+> あと、以下の通り、「教授」を付けていただけますと幸いです。
+> 元日銀の慶應義塾大学商学部の深尾光洋→元日銀の慶應義塾大学商学部の深尾光洋教授
+
+修正しました。
+
+
+> オムロン：
+> 図表が表示されておりません。
+
+失礼致しました。
+これでどうでしょうか。
+
+
+> 5月の国内自動車生産台数：
+> お手数ですが、タイトルを「円安進行の陰で5月も続いた国内自動車生産台数」に変更してください。
+> こちらも図表が表示されません。
+
+タイトルを修正しました。
+合わせて、編集部おすすめのリンクのタイトルも同じに修正しておきました。
+
+
+あわせてご指示がありましたスクリーンショットを添付します。
+
+
+
+============================================================
+
+izumida  57
+104
+106
+105
+
+
+
+
+
+/abstract?id=58
+
+
+mochimaru  54
+102
+103
+
+nishibori  55
+
+
+/admin/demo-upload-file!detailsImg?imgId=106
+/file-download!secureImg?imgId=106&contentsId=58
+
+/admin/demo-upload-file!detailsImg?imgId=108
+/file-download!secureImg?imgId=108&contentsId=58
+
+/admin/demo-upload-file!detailsImg?imgId=107
+/file-download!secureImg?imgId=107&contentsId=58
+------
+
+/admin/demo-upload-file!detailsImg?imgId=104
+
+/file-download!secureImg?imgId=104&contentsId=55
+
+
+/admin/demo-upload-file!detailsImg?imgId=105
+/file-download!secureImg?imgId=105&contentsId=55
+
+
+
+/admin/demo-upload-file!detailsImg?imgId=96
+/admin/demo-upload-file!detailsImg?imgId=95
+
+<img width="685" height="476" src="/admin/demo-upload-file!detailsImg?imgId=99" />
+/file-download!secureImg?imgId=99&contentsId=48
+<img width="685" height="476" src="/admin/demo-upload-file!detailsImg?imgId=98" />
+/file-download!secureImg?imgId=98&contentsId=48
+
+
+
+============================================================
+[mail]
+
+泉田様：
+
+原稿をアップロード致しました。
+ご確認下さい。
+
+以下でご覧になれます。
+http://y08.longine-staging.appspot.com/
+
+よろしくお願いします。
+
+
+
+
+
+============================================================
+[mail]
+
+泉田様：
+
+サイトオープン、おめでとうございます。
+こちらこそいろいろご迷惑をおかけいたしました。
+
+さて、頂いた原稿をアップしました。
+以下でご確認頂けます。
+
+http://y08.longine-staging.appspot.com/
+
+来社の件、承知致しました。
+お待ちしております。
+
+
+
+
+============================================================
+
+[SSL]
+
+------- www.longine.jp
+・秘密鍵
+openssl genrsa -des3 -out www.longine.jp.key 2048
+
+PassPthrase: vYhOL51k0RWQfuxZ
+
+
+
+・CSR
+openssl req -new -key www.longine.jp.key -out www.longine.jp.csr
+
+Country Name:JP
+State or Province Name:Tokyo
+Locality Name:Suginami-ku
+Organization Name: Navigator Platform
+Organizational Unit Name:(入力無し)
+Common Name:www.longine.jp
+Email Address:
+
+・PrivateKeyを復号する(パスフレーズの解除)
+openssl rsa -in www.longine.jp.key -out www.longine.jp.pem
+
+あとは手順通り。
+→反映されるまでに時間はかかった
+
+
+============================================================
+[mail]
+中村様：
+
+ご回答ありがとうございました。
+
+javascript, cssともに、/ で始まるpathですので、そういうリンクはありません。
+
+そもそも Google App Engine でSSLをかけ、いわゆるオレオレ証明書では
+エラーなく表示されます。
+
+違いは、証明書が御社から頂いたものかどうかだけの差です。
+
+もう少しご調査頂けますでしょうか？
+
+よろしくお願いします。
+
+
+
+============================================================
+
+・<h3>に変換される行に半角記号（数字や/など）があった場合、その半角記号ごとに<h3>で括られてしまう。
+・○数字（①）が化ける。
+・いわゆる箇条書きは <ul><li> に変換したい。
+・プレビュー画面の著者の姓名が逆になっている。
+・コンテンツ-確認・承認画面で、停止をしようとすると「テーマを入力してください。」となり、停止できない。
+・コンテンツ新規・更新画面で、リリース予定日がはいっていると、削除できない。
+　「リリースは将来の日付でなければなりません.」がでる。
+・<img>タグは、
+　　1.サイズの指定をなしにする。
+　　2.srcのパスは /admin/　で始まるようにする。
+・プレビュー画面で以下のタグを指定しても表示されない。
+　リリース済みにして、ユーザ画面ではちゃんとでる。
+　　　<span style="background-color:#ffff00>
+
+
+============================================================
+[mail]
+中村様：
+
+ご回答ありがとうございました。
+
+http://で始まるものものを外してみましたが、状態は変わりませんでした。
+
+http://で始まるコンテンツ とは具体的にどれのことか教えて頂けますでしょうか？
+
+
+また、IEで表示されない場合はエラーなどは表示されず、ただ
+　Internet Explorerではこのページは表示できません
+
+となるだけです。
+
+よろしくお願いします。
+
+
+
+============================================================
+[datastore admin]
+
+cd ~/projects/longine/datastore-admin
+
+datastore-admin/app.yamlを修正。
+　app id
+  version
+
+(deploy)
+./google_appengine/appcfg.py -A longine-test update datastore-admin/
+                                ^^^^^^^^^^^^←AppIDを指定！
+
+
+
+datastore-admin.np-longine-test
+datastore-admin.np-longine-stg
+============================================================
+
+
+ステージングに投入作業
+
+アベノミクス
+再生可能エネルギー
+長期投資
+小型株1年
+大型株1年
+
+
+Longine創刊特集として、慶應義塾大学商学部の深尾光洋教授をお招きし、アベノミクスの本質を読み解いていきます。第1回目の講義では、アベノミクスの最大のテーマであるデフレとは何かを解説します。
+
+今後、数々の「次のスマホ」あるいは「スマホの次」が登場するとみられます。そのなかで、最も恩恵を受けるのは、デバイスからのデータを一ヵ所に集約するアプリ・サービスならびにそれを支えるインフラと考えます。
+
+============================================================
+[SSL]
+------- www.longine.jp
+・PrivateKeyを復号する(パスフレーズの解除)
+openssl rsa -in www.longine.jp.key -out test.longine.jp.pem
+
+
+
+------- test.longine.jp
+・秘密鍵
+openssl genrsa -des3 -out test.longine.jp.key 2048
+
+PassPthrase:qO%5fA1Z/NIp9,=9
+
+
+・CSR
+openssl req -new -key test.longine.jp.key -out test.longine.jp.csr
+
+Country Name:JP
+State or Province Name:Tokyo
+Locality Name:Suginami-ku
+Organization Name: Navigator Platform
+Organizational Unit Name:(入力無し)
+Common Name:test.longine.jp
+Email Address:
+
+・PrivateKeyを復号する(パスフレーズの解除)
+openssl rsa -in test.longine.jp.key -out test.longine.jp.pem
+
+・自己証明書
+openssl x509 -in test.longine.jp.csr -days 365 -req -signkey test.longine.jp.key > test.longine.jp.crt
+
+
+
+
+
+
+
+============================================================
+[Backlog　コメント：静的コンテンツ]
+会社情報：原稿待ち
+人材募集：完了
+発行会社の皆様へ：完了
+お問い合わせ：？
+利用規約：原稿待ち
+プライバシー＆ポリシー：完了
+よくある質問：完了
+特定商取引：完了
+
+
+============================================================
+【テストカード】
+
+4980 0000 0060 0000
+4980000000600000
+           ^←ここを増やす
+          61
+4980000000620000
+ 15/1
+ 123
+
+Hajime Kawano
+有効年は３年後くらい
+123
+生年月日は不要
+
+============================================================
+[アンケート]
+
+
+会社員
+公務員
+自営業
+パート・アルバイト
+主婦
+学生
+無職
+その他
+
+
+
+model
+
+enum AGE {
+ AGE_20to30
+ AGE_0to30
+ AGE_20to30
+}
+
+
+QuestionnaireAction
+questionnaire
+
+登録アンケート
+
+address:都道府県（最後に「海外」）のプルダウン（文字列値をそのままぶちこむ）
+business:職種のプルダウン(enum)
+
+
+
+
+<option value="会社員"></option>
+<option value="主婦"></option>
+<option value="パート・アルバイト"></option>
+<option value="無職"></option>
+
+
+salay:年収のプルダウン（enum)
+
+RANGE_100("〜100万円"),
+RANGE_200("〜200万円"),
+RANGE_300("〜300万円"),
+RANGE_400("〜400万円"),
+RANGE_500("〜500万円"),
+OVER_500("500万円以y上")
+
+<option value="sex:性別のプルダウン(enum)
+birth:年代のプルダウン(enum)
+RANGE_10("10代"),
+RANGE_20("20代"),
+RANGE_30("30代"),
+RANGE_40("40代"),
+RANGE_50("50代"),
+RANGE_60("60代"),
+RANGE_HIGHER("70代以上"),

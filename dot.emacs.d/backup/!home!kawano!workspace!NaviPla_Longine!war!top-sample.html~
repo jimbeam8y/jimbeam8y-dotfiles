@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)http://dev.dangkang.com/sample/top-sample3.html# -->
+<html lang="ja"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>Longine（ロンジン）</title>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<link rel="shortcut icon" href="http://dev.dangkang.com/sample/images/common/favicon.ico">
+	<link rel="stylesheet" href="http://dev.dangkang.com/sample/css/normalize.css">
+	<link rel="stylesheet" href="http://dev.dangkang.com/sample/css/colorbox.css">
+	<link rel="stylesheet" href="http://dev.dangkang.com/sample/css/common.css">
+	<link rel="stylesheet" href="http://dev.dangkang.com/sample/css/home.css">
+	</head>
+	
+	
+	
+<body>
+
+
+<div id="wrapper" class="home">
+	
+
+	<div id="header" class="cf">
+		<div class="inner">
+			<h1 id="site-title"><a href="http://dev.dangkang.com/pc/">Longine（ロンジン）</a></h1>
+			<div id="header-info">
+				<div id="tagline">現在（いま）を読み解き、未来（あす）を論ず。</div><div id="social-link">
+					<img src="./top-sample_files/rss.png"> <img src="./top-sample_files/twitter.png">
+				</div>
+				
+				
+				<ul id="header-navigation">
+					<li class="first"><a href="./top-sample_files/top-sample.html">このサービスについて</a></li>
+					<li><a href="./top-sample_files/top-sample.html">ログイン</a></li>
+					<li><a href="./top-sample_files/top-sample.html">新規登録</a></li>
+					<li><a href="./top-sample_files/top-sample.html">購入済コンテンツの再ダウンロード</a></li>
+				</ul>
+			</div>
+			<ul id="global-navigation" class="dropdown-menu">
+				<li><a href="http://dev.dangkang.com/pc/">ホーム</a></li>
+				<li>
+					<a href="./top-sample_files/top-sample.html">テーマ</a>
+					<ul>
+						<li><a href="./top-sample_files/top-sample.html">アベノミクス</a></li>
+						<li><a href="./top-sample_files/top-sample.html">ここに長い文字列が入ります</a></li>
+						<li><a href="./top-sample_files/top-sample.html">北朝鮮</a></li>
+						<li><a href="./top-sample_files/top-sample.html">シェールガス</a></li>
+						<li><a href="./top-sample_files/top-sample.html">ダミー</a></li>
+						<li><a href="./top-sample_files/top-sample.html">ダミー</a></li>
+						<li><a href="./top-sample_files/top-sample.html">ダミー</a></li>
+						<li><a href="./top-sample_files/top-sample.html">ダミー</a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="./top-sample_files/top-sample.html">業界別</a>
+					<ul>
+						<li><a href="./top-sample_files/top-sample.html">電機（99）</a></li>
+						<li><a href="./top-sample_files/top-sample.html">情報通信（99）</a></li>
+						<li><a href="./top-sample_files/top-sample.html">機械（99）</a></li>
+						<li><a href="./top-sample_files/top-sample.html">自動車（99）</a></li>
+						<li><a href="./top-sample_files/top-sample.html">金融（99）</a></li>
+						<li><a href="./top-sample_files/top-sample.html">小売（99）</a></li>
+						<li><a href="./top-sample_files/top-sample.html">その他（99）</a></li>
+					</ul>
+				</li>
+				<li>
+					<a href="./top-sample_files/top-sample.html">著者別</a>
+					<ul>
+						<li><a href="./top-sample_files/top-sample.html">著者名</a></li>
+						<li><a href="./top-sample_files/top-sample.html">著者名</a></li>
+						<li><a href="./top-sample_files/top-sample.html">著者名</a></li>
+						<li><a href="./top-sample_files/top-sample.html">著者名</a></li>
+						<li><a href="./top-sample_files/top-sample.html">著者名</a></li>
+						<li><a href="./top-sample_files/top-sample.html">著者名</a></li>
+					</ul>
+				</li>
+				<li><a href="./top-sample_files/top-sample.html">ランキング</a></li>
+			</ul>
+			<div class="options">
+				<div class="search-form">
+					<form action="">
+						<input class="q" name="q" type="text" placeholder="コード or 会社名" value="">
+					</form>
+				</div>
+				<ul id="user-menu" class="dropdown-menu">
+					<li>
+						<a class="parent">ユーザーメニュー</a>
+						<ul>
+							<li><a href="./top-sample_files/top-sample.html">サインイン</a></li>
+						</ul>
+<!--
+						<ul>
+							<li>
+								<a href="#">マイページ</a>
+								<ul>
+									<li><a href="#">メール通知設定</a></li>
+									<li><a href="#">メールアドレス変更</a></li>
+									<li><a href="#">パスワード変更</a></li>
+									<li><a href="#">購読履歴</a></li>
+									<li><a href="#">クレジットカード情報</a></li>
+								</ul>
+							</li>
+							<li><a href="#">サインアウト</a></li>
+						</ul>
+-->
+
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+
+	<div id="content" class="cf">
+		<div id="main-column">
+			
+			
+			
+			
+			<div id="article-feature" class="article-block">
+				<div class="article-header">
+					<h2>編集部おすすめ 【無料】</h2>
+					<div class="link"><a href="./top-sample_files/top-sample.html">&gt; 記事一覧</a></div>
+				</div>
+
+				<div class="feature">
+					<a href="./top-sample_files/top-sample.html" class="block-link">
+						<div class="date">2013.04.01　13:00</div>
+						<dl class="article">
+							<dt>北総線「運賃値下げ訴訟」　住民敗訴の判決を弁護士はどう見たか</dt>
+							<dd>東京都東部と千葉県北西部を結ぶ鉄道「北総線」。1979年から、第三セクターの北総鉄道が運行している。東京都東部と千葉県北西部を結ぶ鉄道「北総線」。1979年から、第三セクターの北総鉄道が運行している。東京都東部と千葉県北西部を結ぶ鉄道「北総線」。</dd>
+						</dl>
+						<dl class="author">
+							<dt><img src="./top-sample_files/50x50" alt=""></dt>
+							<dd>著者名</dd>
+						</dl>
+					</a>
+				</div>
+				<ul class="article-list">
+					<li><a href="./top-sample_files/top-sample.html" class="block-link"><span class="date">2013.04.01</span> <span class="title">この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。</span></a></li>
+					<li><a href="./top-sample_files/top-sample.html" class="block-link"><span class="date">2013.04.01</span> <span class="title">日本企業が日本に愛想を尽かす日</span></a></li>
+					<li><a href="./top-sample_files/top-sample.html" class="block-link"><span class="date">2013.04.01</span> <span class="title">「"就活４年生解禁" 経団連が政府要請受諾」の茶番</span></a></li>
+					<li><a href="./top-sample_files/top-sample.html" class="block-link"><span class="date">2013.04.01</span> <span class="title">北総線「運賃値下げ訴訟」　住民敗訴の判決を弁護士</span></a></li>
+					<li><a href="./top-sample_files/top-sample.html" class="block-link"><span class="date">2013.04.01</span> <span class="title">日本企業が日本に愛想を尽かす日</span></a></li>
+				</ul>
+			</div>
+
+			<div id="article-event" class="article-block">
+				<div class="article-header">
+					<h2>イベントリスト</h2>
+					<div class="link"><a href="./top-sample_files/top-sample.html">&gt; イベント一覧</a></div>
+				</div>
+
+				<ul class="article-list">
+				<li><a href="./top-sample_files/top-sample.html" class="block-link"><span class="date">2013/04/01 16:30更新</span> <span class="tag color01">情報通信</span>
+				<span class="title"><b>2013.04.01</b> 5月の自動車生産台数発表</span></a></li>
+				</ul>
+			</div>
+
+			<div id="article-recommend" class="article-block">
+				<div class="article-header">
+					<h2>推奨銘柄</h2>
+					<div class="link"><a href="./top-sample_files/top-sample.html">&gt; 記事一覧</a></div>
+				</div>
+				<ul>
+					<li>
+						<a href="./top-sample_files/top-sample.html" class="block-link">
+							<dl class="author">
+								<dt><img src="./top-sample_files/50x50" alt=""></dt>
+								<dd>著者名著者名</dd>
+							</dl>
+							<div class="article">
+								<ul class="inline-list">
+									<li><div class="date">2013.04.01　13:00</div></li>
+									<li><div class="tag color01">情報通信</div></li>
+								</ul>
+								<div class="tag category color01">積立株</div>
+								<div class="title">アナリスト泉田の推奨銘柄</div>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="./top-sample_files/top-sample.html" class="block-link">
+							<dl class="author">
+								<dt><img src="./top-sample_files/50x50" alt=""></dt>
+								<dd>著者名</dd>
+							</dl>
+							<div class="article">
+								<ul class="inline-list">
+									<li><div class="date">2013.04.01　13:00</div></li>
+									<li><div class="tag color01">情報通信</div></li>
+								</ul>
+								<div class="tag category color02">大型株1年</div>
+								<div class="title">アナリスト泉田の推奨銘柄</div>
+							</div>
+						</a>
+					</li>
+					<li>
+						<a href="./top-sample_files/top-sample.html" class="block-link">
+							<dl class="author">
+								<dt><img src="./top-sample_files/50x50" alt=""></dt>
+								<dd>著者名</dd>
+							</dl>
+							<div class="article">
+								<ul class="inline-list">
+									<li><div class="date">2013.04.01　13:00</div></li>
+									<li><div class="tag color01">情報通信</div></li>
+								</ul>
+								<div class="tag category color03">小型株1年</div>
+								<div class="title">アナリスト泉田の推奨銘柄</div>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+
+			<div id="article-institution" class="article-block">
+				<div class="article-header">
+					<h2>機関投資家動向</h2>
+					<div class="link"><a href="./top-sample_files/top-sample.html">&gt; 記事一覧</a></div>
+				</div>
+				<div class="feature">
+					<a href="./top-sample_files/top-sample.html" class="block-link">
+						<div class="date">2013.04.01　13:00</div>
+						<dl class="article">
+							<dt>北総線「運賃値下げ訴訟」　住民敗訴の判決を弁護士はどう見たか</dt>
+							<dd>東京都東部と千葉県北西部を結ぶ鉄道「北総線」。1979年から、第三セクターの北総鉄道が運行している。東京都東部と千葉県北西部を結ぶ鉄道「北総線」。1979年から、第三セクターの北総鉄道が運行している。東京都東部と千葉県北西部を結ぶ鉄道「北総線」。東京都東部と千葉県北西部を結ぶ鉄道「北総線」。1979年から、第三セクターの北総鉄道が運行している。東京都東部と千葉県北西部を結ぶ鉄道「北総線」。1979年から、第三セクターの北総鉄道が運行している。東京都東部と千葉県北西部を結ぶ鉄道「北総線」。</dd>
+						</dl>
+						<dl class="author">
+							<dt><img src="./top-sample_files/50x50" alt=""></dt>
+							<dd>著者名</dd>
+						</dl>
+					</a>
+				</div>
+				<ul class="article-list">
+					<li><a href="./top-sample_files/top-sample.html" class="block-link"><span class="date">2013.04.01</span> <span class="title">この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。</span></a></li>
+					<li><a href="./top-sample_files/top-sample.html" class="block-link"><span class="date">2013.04.01</span> <span class="title">日本企業が日本に愛想を尽かす日</span></a></li>
+					<li><a href="./top-sample_files/top-sample.html" class="block-link"><span class="date">2013.04.01</span> <span class="title">「"就活４年生解禁" 経団連が政府要請受諾」の茶番</span></a></li>
+					<li><a href="./top-sample_files/top-sample.html" class="block-link"><span class="date">2013.04.01</span> <span class="title">北総線「運賃値下げ訴訟」　住民敗訴の判決を弁護士</span></a></li>
+					<li><a href="./top-sample_files/top-sample.html" class="block-link"><span class="date">2013.04.01</span> <span class="title">日本企業が日本に愛想を尽かす日</span></a></li>
+				</ul>
+			</div>
+		</div>
+
+<div id="side-column">
+	
+	<div id="article-campain" class="article-block">
+			<div class="article-header">
+				<h2>キャンペーン</h2>	
+				
+				
+				
+			</div>
+			
+				<div class="trial">
+				<a href="./top-sample_files/top-sample.html" class="a-btn">
+				</a><a class="multi-line-button orange" href="./top-sample_files/top-sample.html" style="width:14em">
+				<span class="title">まずは1週間無料トライアル</span>
+				<span class="subtitle">月額1,050円 読み放題</span>
+				</a>
+				
+				</div>
+			
+	</div>
+	
+	<div id="article-ranking" class="article-block">
+			<div class="article-header">
+					<h2>ニュースレター</h2>
+			</div>
+				
+			<form action="">
+				<ul class="sample">
+				<label><input type="checkbox" name="form-report" id="form-report"> サンプルレポートの送信</label><br>
+					<label><input type="checkbox" name="form-news" id="form-news"> 無料ニュースレターの配信</label>
+					<input type="text" name="form-mail" id="form-mail" placeholder="メールアドレスを入力してください" value="">
+					<input type="submit" value="送信" class="button">
+				</ul>
+				<div class="clear"><a class="border" href="./top-sample_files/top-sample.html">&gt; 読者登録規約を登録前にお読みください</a></div>
+			</form>	
+				
+	</div>
+		
+
+	
+			<div id="article-new" class="article-block">
+				<div class="article-header">
+					<h2>レポート</h2>
+					<div class="link"><a href="./top-sample_files/top-sample.html">&gt; 記事一覧</a></div>
+				</div>
+				<ul>
+					<li>
+						<a href="./top-sample_files/top-sample.html" class="block-link">
+							<div class="date">2013.04.01</div>
+							<dl class="author">
+								<dt><img src="./top-sample_files/50x50" alt=""></dt>
+								<dd>著者名</dd>
+							</dl>
+							<div class="tag color01">情報通信</div>
+							<div class="title">「“就活４年生解禁”経団連が政府要請受諾」の茶番</div>
+						</a>
+					</li>
+					<li>
+						<a href="./top-sample_files/top-sample.html" class="block-link">
+							<div class="date">2013.04.01</div>
+							<dl class="author">
+								<dt><img src="./top-sample_files/50x50" alt=""></dt>
+								<dd>著者名</dd>
+							</dl>
+							<div class="tag color02">電機</div>
+							<div class="title">「“就活４年生解禁”経団連が政府要請受諾」の茶番</div>
+						</a>
+					</li>
+					<li>
+						<a href="./top-sample_files/top-sample.html" class="block-link">
+							<div class="date">2013.04.01</div>
+							<dl class="author">
+								<dt><img src="./top-sample_files/50x50" alt=""></dt>
+								<dd>著者名</dd>
+							</dl>
+							<div class="tag color03">機械</div>
+							<div class="title">「“就活４年生解禁”経団連が政府要請受諾」の茶番</div>
+						</a>
+					</li>
+					<li>
+						<a href="./top-sample_files/top-sample.html" class="block-link">
+							<div class="date">2013.04.01</div>
+							<dl class="author">
+								<dt><img src="./top-sample_files/50x50" alt=""></dt>
+								<dd>著者名</dd>
+							</dl>
+							<div class="tag color04">自動車</div>
+							<div class="title">「“就活４年生解禁”経団連が政府要請受諾」の茶番</div>
+						</a>
+					</li>
+					<li>
+						<a href="./top-sample_files/top-sample.html" class="block-link">
+							<div class="date">2013.04.01</div>
+							<dl class="author">
+								<dt><img src="./top-sample_files/50x50" alt=""></dt>
+								<dd>著者名</dd>
+							</dl>
+							<div class="tag color05">金融</div>
+							<div class="title">「“就活４年生解禁”経団連が政府要請受諾」の茶番</div>
+						</a>
+					</li>
+					<li>
+						<a href="./top-sample_files/top-sample.html" class="block-link">
+							<div class="date">2013.04.01</div>
+							<dl class="author">
+								<dt><img src="./top-sample_files/50x50" alt=""></dt>
+								<dd>著者名</dd>
+							</dl>
+							<div class="tag color06">小売</div>
+							<div class="title">「“就活４年生解禁”経団連が政府要請受諾」の茶番</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+			
+<iframe src="./top-sample_files/likebox.html" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:280px; height:258px;" allowtransparency="true"></iframe>
+
+			
+		</div>
+		
+		
+
+		
+
+	</div>
+
+	<div id="footer">
+		<ul id="footer-navigation">
+			<li class="first"><a href="./top-sample_files/top-sample.html">会社情報</a></li>
+			<li><a href="./top-sample_files/top-sample.html">人材募集</a></li>
+			<li><a href="./top-sample_files/top-sample.html">発行会社の皆様へ</a></li>
+			<li><a href="./top-sample_files/top-sample.html">お問い合わせ</a></li>
+			<li><a href="./top-sample_files/top-sample.html">利用規約</a></li>
+			<li><a href="./top-sample_files/top-sample.html">プライバシー＆ポリシー</a></li>
+			<li><a href="./top-sample_files/top-sample.html">よくある質問</a></li>
+			<li><a href="./top-sample_files/top-sample.html">特定商取引</a></li>
+		</ul>
+		<div id="copyright">© 2013 Longine</div>
+	</div>
+
+</div>
+<script src="./top-sample_files/jquery-1.9.1.min.js"></script>
+<script src="./top-sample_files/jquery.cookie.js"></script>
+<script src="./top-sample_files/jquery.masonry.min.js"></script>
+<script src="./top-sample_files/jquery.imagesloaded.js"></script>
+<script src="./top-sample_files/jquery.equalheights.js"></script>
+<script src="./top-sample_files/jquery.ah-placeholder.js"></script>
+<script src="./top-sample_files/jquery.scrollUp.min.js"></script>
+<script src="./top-sample_files/jquery.colorbox-min.js"></script>
+<script src="./top-sample_files/common.js"></script>
+<script type="text/javascript">
+(function($){
+	$(function() {
+		/* sample form */
+		$("#sample-form .close").click(function(){
+			$('#sample-form').hide();
+			$.cookie("is_sample_form_closed", "true");
+		});
+		if ($.cookie("is_sample_form_closed")){
+			$('#sample-form').hide();
+		}
+	});
+})(jQuery);
+</script>
+
+<style>.myToolbar {z-index:100000} .myToolbar .tb_btn {cursor:pointer;border:1px solid #555;padding:3px}   .tb_highlight{background-color:yellow} .tb_hide {visibility:hidden}</style><style>.tb_button {padding:2px;cursor:pointer;border-right: 1px solid #8b8b8b;border-left: 1px solid #FFF;border-bottom: 1px solid #fff;}.tb_button.hover {borer:2px outset #def; background-color: #f8f8f8 !important;}</style></body></html>

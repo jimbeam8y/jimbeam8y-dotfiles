@@ -1,0 +1,119 @@
+--
+-- Table structure for table `contactlistmaster`
+--
+
+DROP TABLE IF EXISTS `contactlistmaster`;
+CREATE TABLE `contactlistmaster` (
+  `groupName` varchar(200) NOT NULL,
+  `mail` varchar(200) NOT NULL,
+  `displayName` varchar(200) NOT NULL,
+  `updateType` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`groupName`,`mail`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `groupmaster`
+--
+
+DROP TABLE IF EXISTS `groupmaster`;
+CREATE TABLE `groupmaster` (
+  `dn` varchar(200) NOT NULL,
+  `cn` varchar(100) default NULL,
+  `mail` varchar(100) default NULL,
+  `whenChanged` varchar(100) default NULL,
+  `description` varchar(200) default '',
+  `updateType` int(11) NOT NULL,
+  `gappsUpdateStatus` int(11) NOT NULL,
+  `contactUpdateStatus` int(11) NOT NULL,
+  PRIMARY KEY  (`dn`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `login_log`
+--
+
+DROP TABLE IF EXISTS `login_log`;
+CREATE TABLE `login_log` (
+  `LOG_ID` bigint(20) unsigned NOT NULL auto_increment,
+  `IP_ADDRESS` varchar(15) NOT NULL,
+  `USER_NAME` varchar(50) NOT NULL,
+  `LOGIN_TIME` datetime NOT NULL,
+  `LOGIN_STATUS` tinyint(1) NOT NULL,
+  PRIMARY KEY  (`LOG_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `mailinglist`
+--
+
+DROP TABLE IF EXISTS `mailinglist`;
+CREATE TABLE `mailinglist` (
+  `id` int(11) NOT NULL auto_increment,
+  `userDn` varchar(200) default NULL,
+  `groupDn` varchar(200) NOT NULL,
+  `updateType` int(11) NOT NULL,
+  `gappsUpdateStatus` int(11) NOT NULL,
+  `contactUpdateStatus` int(11) NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `iml1` (`userDn`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `mobilemaster`
+--
+
+DROP TABLE IF EXISTS `mobilemaster`;
+CREATE TABLE `mobilemaster` (
+  `username` varchar(200) NOT NULL,
+  `strUID` varchar(100) NOT NULL,
+  `m_password` varchar(100) default NULL,
+  PRIMARY KEY  (`username`),
+  UNIQUE KEY `INDEX_USERID` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `mobiletemporalkey`
+--
+
+DROP TABLE IF EXISTS `mobiletemporalkey`;
+CREATE TABLE `mobiletemporalkey` (
+  `temporalkey` char(20) NOT NULL,
+  `username` varchar(200) NOT NULL,
+  `lifetime` bigint(20) default NULL,
+  `createdtime` datetime default NULL,
+  PRIMARY KEY  (`temporalkey`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Table structure for table `usermaster`
+--
+
+DROP TABLE IF EXISTS `usermaster`;
+CREATE TABLE `usermaster` (
+  `userDn` varchar(200) NOT NULL default '',
+  `userPrincipalName` varchar(100) NOT NULL,
+  `unicodePwd` varchar(100) default NULL,
+  `whenChanged` varchar(100) NOT NULL,
+  `displayName` varchar(100) default NULL,
+  `sn` varchar(100) NOT NULL,
+  `givenName` varchar(100) NOT NULL,
+  `telephoneNumber` varchar(100) default NULL,
+  `mail` varchar(100) default NULL,
+  `st` varchar(100) default NULL,
+  `l` varchar(100) default NULL,
+  `streetAddress` varchar(100) default NULL,
+  `mobile` varchar(100) default NULL,
+  `facsimileTelephoneNumber` varchar(100) default NULL,
+  `department` varchar(100) default NULL,
+  `title` varchar(100) default NULL,
+  `pager` varchar(100) default NULL,
+  `description` varchar(200) default NULL,
+  `physicalDeliveryOfficeName` varchar(100) default NULL,
+  `ipPhone` varchar(100) default NULL,
+  `updateType` int(11) NOT NULL,
+  `gappsUpdateStatus` int(11) NOT NULL,
+  `contactUpdateStatus` int(10) unsigned NOT NULL,
+  PRIMARY KEY  USING BTREE (`userDn`),
+  UNIQUE KEY `IDEX_USERID` (`userDn`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
