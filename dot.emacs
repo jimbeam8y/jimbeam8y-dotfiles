@@ -1,30 +1,28 @@
 ;;;;;;;; -*- emacs-lisp -*-
 
-;; ���ܸ����Ϥ�ibus��ͳ��mozc��Ȥ�
+;; 日本語入力はibus経由のmozcを使う
 (require 'ibus)
 (add-hook 'after-init-hook 'ibus-mode-on)
 
-;; C-SPC �� Set Mark �˻Ȥ�
+;; C-SPC は Set Mark に使う
 ;(ibus-define-common-key ?C-s nil)
-;; C-/ �� Undo �˻Ȥ�
+;; C-/ は Undo に使う
 ;(ibus-define-common-key ?C-/ nil)
-;; IBus�ξ��֤ˤ�äƥ������뿧���Ѳ������� ("on" "off" "disabled")
+;; IBusの状態によってカーソル色を変化させる ("on" "off" "disabled")
 (setq ibus-cursor-color '("firebrick" "dark orange" "royal blue"))
-;; ���٤ƤΥХåե������Ͼ��֤�ͭ (default �ǤϥХåե���˥���ץåȥ᥽�åɤξ��֤��ݻ�)
+;; すべてのバッファで入力状態を共有 (default ではバッファ毎にインプットメソッドの状態を保持)
 (setq ibus-mode-local nil)
-;; ����������֤�ͽ¬���䥦����ɥ���ɽ�� (default �ϥץꥨ�ǥ��å��ΰ����Ƭ���֤�ɽ��)
+;; カーソル位置で予測候補ウィンドウを表示 (default はプリエディット領域の先頭位置に表示)
 (setq ibus-prediction-window-position t)
 
-;; isearch ���ϥ��դ�
+;; isearch 時はオフに
 (ibus-disable-isearch)
 
-;; mini buffer �Ǥϥ��դ�
+;; mini buffer ではオフに
 (add-hook 'minibuffer-setup-hook 'ibus-disable)
 
-;; Keybindings
+;; Key bindings
 (global-set-key (kbd "C-o") 'ibus-toggle)
-;(global-set-key (kbd "M-o") (lambda () (interactive) (ibus-enable "m17n:sa:vz-prefix")))
-;(global-set-key (kbd "C-o") (lambda () (interactive) (ibus-enable "mozc-jp")))
  
 (global-set-key (kbd "C-<f7>")
                 (lambda ()
@@ -34,17 +32,34 @@
 
 ;(setq quail-japanese-use-double-n t)
 
-
 ;; load-path
 (add-to-list 'load-path "~/.emacs.d/")
 (add-to-list 'load-path "~/.emacs.d/auto-install/")
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/w3m/")
 
-
 ;; global settings
 (global-linum-mode t)
 (which-function-mode 1)
+(menu-bar-mode 0)
+(tool-bar-mode 0)
+(global-hl-line-mode t)
+(global-hi-lock-mode 1)
+(setq hi-lock-file-patterns-policy t)
+
 (global-set-key (kbd "C-m") 'newline-and-indent)
+
+;; マウスポインタの色を設定します。
+(add-to-list 'default-frame-alist '(mouse-color . "SlateBlue2"))
+;; モードラインの文字の色を設定します。
+(set-face-foreground 'modeline "black")
+;; モードラインの背景色を設定します。
+(set-face-background 'modeline "LemonChiffon")
+;; 選択中のリージョンの色を設定します。
+;(set-face-background 'region "LightSteelBlue1")
+;; モードライン（アクティブでないバッファ）の文字色を設定します。
+(set-face-foreground 'mode-line-inactive "gray30")
+;; モードライン（アクティブでないバッファ）の背景色を設定します。
+(set-face-background 'mode-line-inactive "gray85")
 
 ;;; backup file
 (setq make-backup-files t)
@@ -58,13 +73,14 @@
             (set-buffer-process-coding-system 'utf-8-emacs-unix 'utf-8-emacs-unix)
             ))
 
-(prefer-coding-system 'utf-8-unix)	; ���ܸ����ϤΤ��������
-(setq default-file-name-coding-system 'utf-8-unix) ;dired�����ܸ�file̾����
+(prefer-coding-system 'utf-8-unix)      ; 日本語入力のための設定
+(setq default-file-name-coding-system 'utf-8-unix) ;diredで日本語file名出力
 
 ;;;;;; package manager
 (require 'package)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+(add-to-list 'package-archives '("ELPA" . "http://tromey.com/elpa/") t)
 (add-to-list 'package-archives '("mepla" . "http://melpa.milkbox.net/packages/") t)
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-initialize)
 
 (require 'auto-install)
@@ -72,6 +88,21 @@
 (auto-install-compatibility-setup)
 
 ;;;;;; packages
+;;; Aspell
+(setq ispell-program-name "aspell")
+(setq ispell-grep-command "grep")
+(eval-after-load "ispell"
+  '(add-to-list 'ispell-skip-region-alist '("[^\000-\377]")))
+;(setq flyspell-issue-welcome-flag nil)
+(setq-default ispell-program-name "aspell")
+
+(mapc                                   ;; 以下flyspell-modeの設定
+ (lambda (hook)
+   (add-hook hook 'flyspell-prog-mode))
+ '(
+   c-mode-common-hook ;; ここに書いたモードではコメント領域のところだけ
+   emacs-lisp-mode-hook ;; flyspell-mode が有効になる
+   ))
 
 ;;; emacsclient
 (require 'server)
@@ -83,27 +114,27 @@
 (setq twittering-use-master-password t)
 (setq twittering-icon-mode nil)
 (setq twittering-display-remaining t)
+(setq twittering-initial-timeline-spec-string
+      '(":home"
+        ":replies"
+        ":favorites"
+        ":direct_messages"
+        "jimbeam8y/friends"))
 (defun my-twit ()
   (interactive)
-  (delete-other-windows)
-  (split-window-horizontally)
-;  (split-window-horizontally)
+  (elscreen-create)
   (balance-windows)
   (twit)
   (cond
    ((twittering-account-authorized-p)
-    (switch-to-buffer ":home")
-    (other-window 1)
-    (twittering-visit-timeline ":replies")
+    (switch-to-buffer "jimbeam8y/friends")
     (other-window 1))
-;    (twittering-visit-timeline "jimbeam8y/friends")
-;    (other-window 1))
    (t
     (delete-other-windows))))
 
 ;;; w3m
 (require 'w3m-load)
-(setq w3m-use-cookies t)		;Enable Cookies
+(setq w3m-use-cookies t)                ;Enable Cookies
 
 ;;; recentf
 (require 'recentf)
@@ -132,8 +163,9 @@
 ;; Chrome text area edit
 (require 'edit-server)
 (edit-server-start)
+(setq edit-server-new-frame nil)
 
-(require 'backlog)
+;(require 'backlog)
 
 
 ;; Load CEDET.
@@ -178,16 +210,16 @@
 
 ;; Emacs-Lisp
 (add-hook 'emacs-lisp-mode-hook
-	  (lambda ()
-	    ))
+          (lambda ()
+            ))
 
 ;; Java
 (add-hook 'java-mode-hook
-	  (lambda ()
-	    (message "hook")
-	    (setq tab-width 2)
-	    (setq indent-tabs-mode t)
-	    (setq c-basic-offset 2)))
+          (lambda ()
+            (message "hook")
+            (setq tab-width 2)
+            (setq indent-tabs-mode t)
+            (setq c-basic-offset 2)))
 
 ;; web-mode
 (require 'web-mode)
@@ -199,7 +231,7 @@
 (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
-;;; ����ǥ�ȿ�
+;;; インデント数
 (defun web-mode-hook ()
   "Hooks for Web mode."
   (setq web-mode-html-offset   2)
@@ -209,7 +241,6 @@
   (setq web-mode-java-offset   2)
   (setq web-mode-asp-offset    2))
 (add-hook 'web-mode-hook 'web-mode-hook)
-
 
 ;;;; tips for Ubuntu
 (when (and (executable-find "cmigemo")
@@ -222,12 +253,13 @@
   (load-library "migemo")
   (migemo-init)
 )
+
 (setq migemo-command "cmigemo")
 (setq migemo-dictionary "/usr/share/cmigemo/utf-8/migemo-dict")
 ;(setq search-whitespace-regexp nil)
 
 ;;; via http://d.hatena.ne.jp/kitokitoki/20121103/p3
-;; �ե�����Τ���ǥ��쥯�ȥ������ Nautilus �򳫤�
+;; ファイルのあるディレクトリを起点に Nautilus を開く
 (defun exec-filemanager ()
   (interactive)
   (call-process "nautilus" nil nil nil "--no-desktop" "-n"
@@ -235,7 +267,7 @@
                     default-directory)))
 
 (defalias 'nau 'exec-filemanager)
-;; dired �ǳ����Ƥ���ǥ��쥯�ȥ�� nautilus �ǳ����ؿ��⤢��ޤ�����
+;; dired で開いているディレクトリを nautilus で開く関数もありました。
 ;; http://qiita.com/items/2620874c802db60c99f9
 (defun dired-open-nautilus ()
   (interactive)
@@ -256,7 +288,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(initial-frame-alist (quote ((top . 50) (left . 480) (width . 96) (height . 55))))
+ '(global-hl-line-mode t)
+ '(initial-frame-alist (quote ((top . 10) (left . 430) (width . 110) (height . 58))))
  '(show-paren-mode t)
  '(vc-follow-symlinks t))
 (custom-set-faces
@@ -264,4 +297,5 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(font-lock-comment-face ((t (:foreground "lime green")))))
+ '(font-lock-comment-face ((t (:foreground "lime green"))))
+ '(hl-line ((t (:underline "dodger blue")))))
