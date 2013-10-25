@@ -34,7 +34,7 @@
 
 ;; load-path
 (add-to-list 'load-path "~/.emacs.d/")
-(add-to-list 'load-path "~/.emacs.d/auto-install/")
+;(add-to-list 'load-path "~/.emacs.d/auto-install/")
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/w3m/")
 
 ;; global settings
@@ -45,6 +45,37 @@
 (global-hl-line-mode t)
 (global-hi-lock-mode 1)
 (setq hi-lock-file-patterns-policy t)
+(setq transient-mark-mode t)
+
+;;; key bind
+(global-unset-key "\C-q")
+(defvar ctl-q-map (make-keymap))
+(define-key global-map (kbd "C-q") ctl-q-map)
+(define-key ctl-q-map (kbd "c") 'elscreen-create)
+(define-key ctl-q-map (kbd "k") 'elscreen-kill)
+(define-key ctl-q-map (kbd "d") 'elscreen-dired)
+(define-key ctl-q-map (kbd "n") 'elscreen-next)
+(define-key ctl-q-map (kbd "C-n") 'elscreen-next)
+(define-key ctl-q-map (kbd "p") 'elscreen-previous)
+(define-key ctl-q-map (kbd "C-p") 'elscreen-previous)
+(define-key ctl-q-map (kbd "0") 'elscreen-jump-0)
+(define-key ctl-q-map (kbd "1") 'elscreen-jump)
+(define-key ctl-q-map (kbd "2") 'elscreen-jump)
+(define-key ctl-q-map (kbd "3") 'elscreen-jump)
+(define-key ctl-q-map (kbd "4") 'elscreen-jump)
+(define-key ctl-q-map (kbd "5") 'elscreen-jump)
+(define-key ctl-q-map (kbd "6") 'elscreen-jump)
+(define-key ctl-q-map (kbd "7") 'elscreen-jump)
+(define-key ctl-q-map (kbd "8") 'elscreen-jump)
+(define-key ctl-q-map (kbd "9") 'elscreen-jump-9)
+(define-key ctl-q-map (kbd "?") 'elscreen-help)
+(define-key ctl-q-map (kbd "t") 'my-twit)
+
+;(define-key ctl-q-map (kbd "C-a") 'your-favorite-funca)
+;(define-key ctl-q-map (kbd "C-b") 'your-favorite-funcb)
+(define-key ctl-q-map (kbd "C-q") 'quoted-insert)
+;(define-key ctl-q-map (kbd "C-z") 'your-favorite-funcz)
+
 
 (global-set-key (kbd "C-m") 'newline-and-indent)
 
@@ -83,9 +114,9 @@
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 (package-initialize)
 
-(require 'auto-install)
-(auto-install-update-emacswiki-package-name t)
-(auto-install-compatibility-setup)
+;; (require 'auto-install)
+;; (auto-install-update-emacswiki-package-name t)
+;; (auto-install-compatibility-setup)
 
 ;;;;;; packages
 ;;; Aspell
@@ -115,15 +146,11 @@
 (setq twittering-icon-mode nil)
 (setq twittering-display-remaining t)
 (setq twittering-initial-timeline-spec-string
-      '(":home"
-        ":replies"
-        ":favorites"
-        ":direct_messages"
-        "jimbeam8y/friends"))
+      '("jimbeam8y/friends"))
+
 (defun my-twit ()
   (interactive)
   (elscreen-create)
-  (balance-windows)
   (twit)
   (cond
    ((twittering-account-authorized-p)
@@ -132,6 +159,13 @@
    (t
     (delete-other-windows))))
 
+(add-hook 'twittering-new-tweets-hook (lambda ()
+   (let ((n twittering-new-tweets-count))
+     (start-process "twittering-notify" nil "notify-send"
+                    "-i" "/usr/share/pixmaps/gnome-emacs.png"
+                    "New tweets"
+                    (format "You have %d new tweet%s"
+                            n (if (> n 1) "s" ""))))))
 ;;; w3m
 (require 'w3m-load)
 (setq w3m-use-cookies t)                ;Enable Cookies
@@ -159,6 +193,7 @@
 
 ;;; like a 'screen'
 (elscreen-start)
+(setq elscreen-prefix-key "\C-q")
 
 ;; Chrome text area edit
 (require 'edit-server)
@@ -257,23 +292,6 @@
 (setq migemo-command "cmigemo")
 (setq migemo-dictionary "/usr/share/cmigemo/utf-8/migemo-dict")
 ;(setq search-whitespace-regexp nil)
-
-;;; via http://d.hatena.ne.jp/kitokitoki/20121103/p3
-;; ファイルのあるディレクトリを起点に Nautilus を開く
-(defun exec-filemanager ()
-  (interactive)
-  (call-process "nautilus" nil nil nil "--no-desktop" "-n"
-                (or (file-name-directory buffer-file-name)
-                    default-directory)))
-
-(defalias 'nau 'exec-filemanager)
-;; dired で開いているディレクトリを nautilus で開く関数もありました。
-;; http://qiita.com/items/2620874c802db60c99f9
-(defun dired-open-nautilus ()
-  (interactive)
-  (call-process "nautilus" nil 0 nil (dired-current-directory)))
-(define-key dired-mode-map "e" 'dired-open-nautilus)
-(defalias 'naud 'dired-open-nautilus)
 
 ;; helm
 ;;;; this section must be here.
