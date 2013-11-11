@@ -457,6 +457,12 @@
           (lambda ()
             ))
 
+(add-hook 'c-mode-common-hook
+          '(lambda()
+             (gtags-mode 1)
+             (gtags-make-complete-list)
+             ))
+
 ;; Java
 (add-hook 'java-mode-hook
           (lambda ()
@@ -509,13 +515,23 @@
 (setq migemo-dictionary "/usr/share/cmigemo/utf-8/migemo-dict")
 ;(setq search-whitespace-regexp nil)
 
+;;;;
+;;;; hiwin
+;;;; via http://d.hatena.ne.jp/tomoya/20100607/1275862600
+(require 'hiwin)
+(hiwin-mode)
+
 ;; helm
 ;;;; this section must be here.
 (require 'helm-config)
 (require 'helm-migemo)
+(setq helm-use-migemo t)
+
 (helm-mode 1)
 (global-set-key (kbd "C-c h") 'helm-mini)
-;(global-set-key "\C-x\C-f" 'helm-for-files)
+(define-key ctl-x-map "\C-f" 'helm-for-files)
+(global-set-key (kbd "M-y") 'helm-show-kill-ring)
+
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
