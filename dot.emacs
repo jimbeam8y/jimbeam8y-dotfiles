@@ -10,8 +10,6 @@
 
 ;;; load-path
 (add-to-list 'load-path "~/.emacs.d/")
-;; via http://forums.pcbsd.org/showthread.php?t=17911
-
 ;;; mozc
 (require 'mozc)
 (set-language-environment "Japanese")
@@ -26,8 +24,8 @@
 (display-time)
 (cond (window-system
        (setq frame-title-format
-	     '((multiple-frames "")
-	       display-time-string))
+             '((multiple-frames "")
+               display-time-string))
        (remove-hook 'global-mode-string 'display-time-string)))
 
 ;;;;;;; Coolな設定
@@ -40,16 +38,16 @@
 (add-to-list 'default-frame-alist '(alpha . (92 70)))
 
 ;;; フォントの設定
-(when (find-font (font-spec :family "UmePlus Gothic"))
+(when (find-font (font-spec :family "UmePlus Gothic mod"))
   ;; http://save.sys.t.u-tokyo.ac.jp/~yusa/fonts/ricty.html
   (set-face-attribute 'default
                       nil
-                      :family "UmePlus Gothic"
+                      :family "UmePlus Gothic mod"
                       :height 120)
-  (add-to-list 'default-frame-alist '(font . "UmePlus Gothic-12"))
+  (add-to-list 'default-frame-alist '(font . "UmePlus Gothic mod"))
   (set-fontset-font nil
                     'unicode
-                    (font-spec :family "UmePlus Gothic")
+                    (font-spec :family "UmePlus Gothic mod")
                     nil
                     'append)
   ;; (set-frame-font "Ricty-16:weight=normal:slant=normal")
@@ -82,7 +80,7 @@
         ))
 
 (require 'whitespace)
-(global-whitespace-mode 1) ;; 常に whitespace-mode だと動作が遅くなる場合がある
+(global-whitespace-mode 0) ;; 常に whitespace-mode だと動作が遅くなる場合がある
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
@@ -91,12 +89,6 @@
 ;; EOB を表示
 (setq-default indicate-empty-lines t)
 (setq-default indicate-buffer-boundaries 'left)
-;; 変更点に色付け
-(global-highlight-changes-mode t)
-;; 初期は非表示として highlight-changes-visible-mode で表示する
-(setq highlight-changes-visibility-initial-state nil)
-(global-set-key (kbd "M-]") 'highlight-changes-next-change)
-(global-set-key (kbd "M-[") 'highlight-changes-previous-change)
 
 ;;;;;;;;
 ;;;;;;;;
@@ -153,6 +145,7 @@
 (add-to-list 'package-archives '("ELPA" . "http://tromey.com/elpa/") t)
 (package-initialize)
 
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/auto-install/"))
 (require 'auto-install)
 (auto-install-update-emacswiki-package-name t)
 ;(auto-install-compatibility-setup)
@@ -368,17 +361,17 @@
 ;;Set default download directory
 ;; (let ((d "~/downloads/"))
 ;;   (setq w3m-default-save-directory(or(and(file-directory-p d) d)
-;; 				     w3m-default-directory)
-;; 	)
+;;                                   w3m-default-directory)
+;;      )
 ;;   )
 
 ;;W3M doesn't name buffers very intelligently. Let's fix that:
 (add-hook 'w3m-display-hook
-	  (lambda (url)
-	    (rename-buffer
-	     (format "*w3m: %s*"
-		     (or w3m-current-titlew3m-current-url))
-	     t)))
+          (lambda (url)
+            (rename-buffer
+             (format "*w3m: %s*"
+                     (or w3m-current-titlew3m-current-url))
+             t)))
 
 (defun my-google-search ()
   (interactive)
@@ -406,7 +399,7 @@
 ;;;;;
 ;;;;;最小の e2wm 設定例
 ;; with Magit
-(auto-install-from-url "https://github.com/kiwanami/emacs-window-manager/raw/master/e2wm-vcs.el")
+;(auto-install-from-url "https://github.com/kiwanami/emacs-window-manager/raw/master/e2wm-vcs.el")
 (require 'e2wm-config)
 
 (global-set-key (kbd "M-+") 'e2wm:start-management)
@@ -452,9 +445,17 @@
 ;(require 'backlog)
 
 ;;;;; mode hook
+;; Text
+(add-hook 'text-mode-hook
+          (lambda ()
+            (whitespace-mode)
+            (setq tab-width 4)
+            ))
+
 ;; Emacs-Lisp
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
+            (whitespace-mode)
             ))
 
 (add-hook 'c-mode-common-hook
@@ -515,13 +516,139 @@
 (setq migemo-dictionary "/usr/share/cmigemo/utf-8/migemo-dict")
 ;(setq search-whitespace-regexp nil)
 
+
+;;;;
+;;;; org-mode
+(add-to-list 'load-path "~/.emacs.d/org-mode") ;github repo.
+(add-to-list 'load-path "~/.emacs.d/org-mode/contrib/lisp") ;github repo.
+(require 'org-install)
+
+(add-to-list 'auto-mode-alist '("\\.org\\'" . org-mode))
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-cc" 'org-capture)
+(global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cb" 'org-iswitchb)
+
+(setq org-src-fontify-natively t)
+
 ;;;;
 ;;;; hiwin
 ;;;; via http://d.hatena.ne.jp/tomoya/20100607/1275862600
+; (auto-install-from-url "http://github.com/tomoya/hiwin-mode/raw/master/hiwin.el")
 (require 'hiwin)
 (hiwin-mode)
 
-;; helm
+;;;;
+;;;; PowerLine
+(require 'powerline)
+
+;; powerline.el
+(defun arrow-right-xpm (color1 color2)
+  "Return an XPM right arrow string representing."
+  (format "/* XPM */
+static char * arrow_right[] = {
+\"12 18 2 1\",
+\". c %s\",
+\"  c %s\",
+\".           \",
+\"..          \",
+\"...         \",
+\"....        \",
+\".....       \",
+\"......      \",
+\".......     \",
+\"........    \",
+\".........   \",
+\".........   \",
+\"........    \",
+\".......     \",
+\"......      \",
+\".....       \",
+\"....        \",
+\"...         \",
+\"..          \",
+\".           \"};"  color1 color2))
+
+(defun arrow-left-xpm (color1 color2)
+  "Return an XPM right arrow string representing."
+  (format "/* XPM */
+static char * arrow_right[] = {
+\"12 18 2 1\",
+\". c %s\",
+\"  c %s\",
+\"           .\",
+\"          ..\",
+\"         ...\",
+\"        ....\",
+\"       .....\",
+\"      ......\",
+\"     .......\",
+\"    ........\",
+\"   .........\",
+\"   .........\",
+\"    ........\",
+\"     .......\",
+\"      ......\",
+\"       .....\",
+\"        ....\",
+\"         ...\",
+\"          ..\",
+\"           .\"};"  color2 color1))
+
+
+(defconst color1 "#FF6699")
+(defconst color2 "#FF0066")
+(defconst color3 "#4682b4")
+(defconst color4 "#CDC0B0")
+(defconst color5 "#0000cd")
+
+(defvar arrow-right-1 (create-image (arrow-right-xpm color1 color2) 'xpm t :ascent 'center))
+(defvar arrow-right-2 (create-image (arrow-right-xpm color2 color5) 'xpm t :ascent 'center))
+(defvar arrow-right-3 (create-image (arrow-right-xpm color5 "None") 'xpm t :ascent 'center))
+(defvar arrow-left-1  (create-image (arrow-left-xpm color2 color1) 'xpm t :ascent 'center))
+(defvar arrow-left-2  (create-image (arrow-left-xpm "None" color2) 'xpm t :ascent 'center))
+
+(setq-default mode-line-format
+(list '(:eval (concat (propertize " %*  %b " 'face 'mode-line-color-1)
+		      (propertize " " 'display arrow-right-1)))
+      '(:eval (concat (propertize " %Z " 'face 'mode-line-color-2)
+		      (propertize " " 'display arrow-right-2)))
+      '(:eval (concat (propertize " %m " 'face 'mode-line-color-3)
+		      (propertize " " 'display arrow-right-3)))
+
+      mode-line-process
+      minor-mode-alist
+
+	;; Justify right by filling with spaces to right fringe - 16
+        ;; (16 should be computed rahter than hardcoded)
+        '(:eval (propertize " " 'display '((space :align-to (- right-fringe 17)))))
+
+        '(:eval (concat (propertize " " 'display arrow-left-2)
+                        (propertize " %p " 'face 'mode-line-color-2)))
+        '(:eval (concat (propertize " " 'display arrow-left-1)
+                        (propertize "%4l:%2c  " 'face 'mode-line-color-1)))
+	))
+
+(make-face 'mode-line-color-1)
+(set-face-attribute 'mode-line-color-1 nil
+                    :foreground "#fff"
+                    :background color1)
+
+(make-face 'mode-line-color-2)
+(set-face-attribute 'mode-line-color-2 nil
+                    :foreground "#fff"
+                    :background color2)
+
+(make-face 'mode-line-color-3)
+(set-face-attribute 'mode-line-color-3 nil
+                    :foreground "#fff"
+                    :background color5)
+
+(set-face-attribute 'mode-line nil
+		    :foreground "black")
+
+
+;;;; helm
 ;;;; this section must be here.
 (require 'helm-config)
 (require 'helm-migemo)
@@ -531,7 +658,6 @@
 (global-set-key (kbd "C-c h") 'helm-mini)
 (define-key ctl-x-map "\C-f" 'helm-for-files)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
-
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
