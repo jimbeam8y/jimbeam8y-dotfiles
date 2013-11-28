@@ -41,7 +41,6 @@
 ;;;; mozc
 ;;;; via http://d.hatena.ne.jp/syohex/20120126/1327597912
 (require 'mozc)
-
 (setq mozc-leim-title "[I&#9825;Mozc]") ; modeline変更
 
 (set-language-environment "Japanese")
@@ -206,16 +205,16 @@
 ;; (el-get 'sync)
 
 ;;;;;; packages
-;;; color-theme
-;;; via http://d.hatena.ne.jp/fatrow/20101025/emacs_color_theme
-(require 'color-theme)
-(require 'zenburn)
-(eval-after-load "color-theme"
-  '(progn
-     (color-theme-initialize)
-;     (color-theme-ld-dark)
-     (color-theme-zenburn)
-     ))
+;; ;;; color-theme
+;; ;;; via http://d.hatena.ne.jp/fatrow/20101025/emacs_color_theme
+;; (require 'color-theme)
+;; (require 'zenburn)
+;; (eval-after-load "color-theme"
+;;   '(progn
+;;      (color-theme-initialize)
+;; ;     (color-theme-ld-dark)
+;;      (color-theme-zenburn)
+;;      ))
 
 ;;; Aspell
 (setq ispell-program-name "aspell")
@@ -405,7 +404,6 @@
              ))
 (add-hook 'c-mode-common-hook 'flycheck-mode)
 
-
 ;; Java
 (add-hook 'java-mode-hook
           (lambda ()
@@ -427,6 +425,9 @@
 ;; Ruby
 (add-hook 'ruby-mode-hook 'flycheck-mode)
 
+;; CSS
+(add-hook 'css-mode-hook 'flycheck-mode)
+
 ;; web-mode
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
@@ -447,7 +448,10 @@
   (setq web-mode-java-offset   2)
   (setq web-mode-asp-offset    2))
 (add-hook 'web-mode-hook 'web-mode-hook)
+(add-hook 'web-mode-hook 'flycheck-mode)
 
+
+;;;;
 ;;;; tips for Ubuntu
 (when (and (executable-find "cmigemo")
            (require 'migemo nil t))
@@ -463,7 +467,6 @@
 (setq migemo-command "cmigemo")
 (setq migemo-dictionary "/usr/share/cmigemo/utf-8/migemo-dict")
 ;(setq search-whitespace-regexp nil)
-
 
 ;;;;
 ;;;; org-mode
@@ -527,122 +530,122 @@
 (require 'flymake-json)
 (add-hook 'json-mode-hook 'flymake-json-load)
 
-;;;;
-;;;; PowerLine
-(require 'powerline)
-(defun arrow-right-xpm (color1 color2)
-  "Return an XPM right arrow string representing."
-  (format "/* XPM */
-static char * arrow_right[] = {
-\"12 18 2 1\",
-\". c %s\",
-\"  c %s\",
-\".           \",
-\"..          \",
-\"...         \",
-\"....        \",
-\".....       \",
-\"......      \",
-\".......     \",
-\"........    \",
-\".........   \",
-\".........   \",
-\"........    \",
-\".......     \",
-\"......      \",
-\".....       \",
-\"....        \",
-\"...         \",
-\"..          \",
-\".           \"};"  color1 color2))
+;; ;;;;
+;; ;;;; PowerLine
+;; (require 'powerline)
+;; (defun arrow-right-xpm (color1 color2)
+;;   "Return an XPM right arrow string representing."
+;;   (format "/* XPM */
+;; static char * arrow_right[] = {
+;; \"12 18 2 1\",
+;; \". c %s\",
+;; \"  c %s\",
+;; \".           \",
+;; \"..          \",
+;; \"...         \",
+;; \"....        \",
+;; \".....       \",
+;; \"......      \",
+;; \".......     \",
+;; \"........    \",
+;; \".........   \",
+;; \".........   \",
+;; \"........    \",
+;; \".......     \",
+;; \"......      \",
+;; \".....       \",
+;; \"....        \",
+;; \"...         \",
+;; \"..          \",
+;; \".           \"};"  color1 color2))
 
-(defun arrow-left-xpm (color1 color2)
-  "Return an XPM right arrow string representing."
-  (format "/* XPM */
-static char * arrow_right[] = {
-\"12 18 2 1\",
-\". c %s\",
-\"  c %s\",
-\"           .\",
-\"          ..\",
-\"         ...\",
-\"        ....\",
-\"       .....\",
-\"      ......\",
-\"     .......\",
-\"    ........\",
-\"   .........\",
-\"   .........\",
-\"    ........\",
-\"     .......\",
-\"      ......\",
-\"       .....\",
-\"        ....\",
-\"         ...\",
-\"          ..\",
-\"           .\"};"  color2 color1))
+;; (defun arrow-left-xpm (color1 color2)
+;;   "Return an XPM right arrow string representing."
+;;   (format "/* XPM */
+;; static char * arrow_right[] = {
+;; \"12 18 2 1\",
+;; \". c %s\",
+;; \"  c %s\",
+;; \"           .\",
+;; \"          ..\",
+;; \"         ...\",
+;; \"        ....\",
+;; \"       .....\",
+;; \"      ......\",
+;; \"     .......\",
+;; \"    ........\",
+;; \"   .........\",
+;; \"   .........\",
+;; \"    ........\",
+;; \"     .......\",
+;; \"      ......\",
+;; \"       .....\",
+;; \"        ....\",
+;; \"         ...\",
+;; \"          ..\",
+;; \"           .\"};"  color2 color1))
 
 
-(defconst color1 "NavyBlue")
-(defconst color2 "RoyalBlue")
-(defconst color3 "#4682b4")
-(defconst color4 "#CDC0B0")
-(defconst color5 "#0000cd")
-(defconst color6 "#8b008b")
+;; (defconst color1 "NavyBlue")
+;; (defconst color2 "RoyalBlue")
+;; (defconst color3 "#4682b4")
+;; (defconst color4 "#CDC0B0")
+;; (defconst color5 "#0000cd")
+;; (defconst color6 "#8b008b")
 
-(defvar arrow-right-1 (create-image (arrow-right-xpm color1 color2) 'xpm t :ascent 'center))
-(defvar arrow-right-2 (create-image (arrow-right-xpm color2 color5) 'xpm t :ascent 'center))
-(defvar arrow-right-3 (create-image (arrow-right-xpm color5 color6) 'xpm t :ascent 'center))
-(defvar arrow-right-4 (create-image (arrow-right-xpm color6 "None") 'xpm t :ascent 'center))
-(defvar arrow-left-1  (create-image (arrow-left-xpm color2 color1) 'xpm t :ascent 'center))
-(defvar arrow-left-2  (create-image (arrow-left-xpm "None" color2) 'xpm t :ascent 'center))
+;; (defvar arrow-right-1 (create-image (arrow-right-xpm color1 color2) 'xpm t :ascent 'center))
+;; (defvar arrow-right-2 (create-image (arrow-right-xpm color2 color5) 'xpm t :ascent 'center))
+;; (defvar arrow-right-3 (create-image (arrow-right-xpm color5 color6) 'xpm t :ascent 'center))
+;; (defvar arrow-right-4 (create-image (arrow-right-xpm color6 "None") 'xpm t :ascent 'center))
+;; (defvar arrow-left-1  (create-image (arrow-left-xpm color2 color1) 'xpm t :ascent 'center))
+;; (defvar arrow-left-2  (create-image (arrow-left-xpm "None" color2) 'xpm t :ascent 'center))
 
-(setq-default mode-line-format
- (list
-  '(:eval (concat (propertize " %Z " 'face 'mode-line-color-1)
-		  (propertize "  " 'display arrow-right-1)))
-  '(:eval (concat (propertize " %* %b " 'face 'mode-line-color-2)
-		  (propertize " " 'display arrow-right-2)))
-  '(:eval (concat (propertize " %m " 'face 'mode-line-color-3)
-		  (propertize " " 'display arrow-right-3)))
-  '(:eval (concat (propertize " " vc-mode " " 'face 'mode-line-color-4)
-		  (propertize " " 'display arrow-right-4)))
+;; (setq-default mode-line-format
+;;  (list
+;;   '(:eval (concat (propertize " %Z " 'face 'mode-line-color-1)
+;; 		  (propertize "  " 'display arrow-right-1)))
+;;   '(:eval (concat (propertize " %* %b " 'face 'mode-line-color-2)
+;; 		  (propertize " " 'display arrow-right-2)))
+;;   '(:eval (concat (propertize " %m " 'face 'mode-line-color-3)
+;; 		  (propertize " " 'display arrow-right-3)))
+;;   '(:eval (concat (propertize " " vc-mode " " 'face 'mode-line-color-4)
+;; 		  (propertize " " 'display arrow-right-4)))
 
-  mode-line-process minor-mode-alist mode-line-misc-info
+;;   mode-line-process minor-mode-alist mode-line-misc-info
 
-  ;; Justify right by filling with spaces to right fringe - 16
-  ;; (16 should be computed rahter than hardcoded)
-  '(:eval (propertize " " 'display '((space :align-to (- right-fringe 16)))))
+;;   ;; Justify right by filling with spaces to right fringe - 16
+;;   ;; (16 should be computed rahter than hardcoded)
+;;   '(:eval (propertize " " 'display '((space :align-to (- right-fringe 16)))))
 
-  '(:eval (concat (propertize " " 'display arrow-left-2)
-		  (propertize " %p " 'face 'mode-line-color-2)))
-  '(:eval (concat (propertize " " 'display arrow-left-1)
-		  (propertize "%4l:%2c  " 'face 'mode-line-color-1)))
-  )
- )
+;;   '(:eval (concat (propertize " " 'display arrow-left-2)
+;; 		  (propertize " %p " 'face 'mode-line-color-2)))
+;;   '(:eval (concat (propertize " " 'display arrow-left-1)
+;; 		  (propertize "%4l:%2c  " 'face 'mode-line-color-1)))
+;;   )
+;;  )
 
-(make-face 'mode-line-color-1)
-(set-face-attribute 'mode-line-color-1 nil
-                    :foreground "#fff"
-                    :background color1)
+;; (make-face 'mode-line-color-1)
+;; (set-face-attribute 'mode-line-color-1 nil
+;;                     :foreground "#fff"
+;;                     :background color1)
 
-(make-face 'mode-line-color-2)
-(set-face-attribute 'mode-line-color-2 nil
-                    :foreground "#fff"
-                    :background color2)
+;; (make-face 'mode-line-color-2)
+;; (set-face-attribute 'mode-line-color-2 nil
+;;                     :foreground "#fff"
+;;                     :background color2)
 
-(make-face 'mode-line-color-3)
-(set-face-attribute 'mode-line-color-3 nil
-                    :foreground "#fff"
-                    :background color5)
+;; (make-face 'mode-line-color-3)
+;; (set-face-attribute 'mode-line-color-3 nil
+;;                     :foreground "#fff"
+;;                     :background color5)
 
-(make-face 'mode-line-color-4)
-(set-face-attribute 'mode-line-color-4 nil
-                    :foreground "#fff"
-                    :background color6)
+;; (make-face 'mode-line-color-4)
+;; (set-face-attribute 'mode-line-color-4 nil
+;;                     :foreground "#fff"
+;;                     :background color6)
 
-(set-face-attribute 'mode-line nil
-                    :foreground "black")
+;; (set-face-attribute 'mode-line nil
+;;                     :foreground "black")
 
 ;;;;
 ;;;; tips: Emacs24 で動作が重くなったのを改善
@@ -686,18 +689,22 @@ static char * arrow_right[] = {
    "July"    "August"   "September" "October" "November" "December"])
 ;;; via http://sheephead.homelinux.org/2011/01/19/6571/
 (custom-set-faces
- '(cfw:face-title ((t (:foreground "#f0dfaf" :weight bold :height 2.0 :inherit variable-pitch))))
- '(cfw:face-header ((t (:foreground "#d0bf8f" :weight bold))))
- '(cfw:face-sunday ((t :foreground "#cc9393" :background "grey10" :weight bold)))
- '(cfw:face-saturday ((t :foreground "#8cd0d3" :background "grey10" :weight bold)))
- '(cfw:face-holiday ((t :background "grey10" :foreground "#8c5353" :weight bold)))
- '(cfw:face-default-content ((t :foreground "#bfebbf")))
- '(cfw:face-regions ((t :foreground "#366060")))
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
  '(cfw:face-day-title ((t :background "grey10")))
+ '(cfw:face-default-content ((t :foreground "#bfebbf")))
+ '(cfw:face-header ((t (:foreground "#d0bf8f" :weight bold))))
+ '(cfw:face-holiday ((t :background "grey10" :foreground "#8c5353" :weight bold)))
  '(cfw:face-periods ((t :foreground "#8cd0d3")))
- '(cfw:face-today-title ((t :background "#7f9f7f" :weight bold)))
+ '(cfw:face-regions ((t :foreground "#366060")))
+ '(cfw:face-saturday ((t :foreground "#8cd0d3" :background "grey10" :weight bold)))
+ '(cfw:face-select ((t :background "#2f2f2f")))
+ '(cfw:face-sunday ((t :foreground "#cc9393" :background "grey10" :weight bold)))
+ '(cfw:face-title ((t (:foreground "#f0dfaf" :weight bold :height 2.0 :inherit variable-pitch))))
  '(cfw:face-today ((t :background: "grey10" :weight bold)))
- '(cfw:face-select ((t :background "#2f2f2f"))))
+ '(cfw:face-today-title ((t :background "#7f9f7f" :weight bold))))
 
 ;; 曜日
 (setq calendar-day-name-array
@@ -724,6 +731,11 @@ static char * arrow_right[] = {
 ;;     global-map "M-g" '(("M-n" . 'flymake-goto-next-error)
 ;;                        ("M-p" . 'flymake-goto-prev-error)))
 
+(require 'flycheck-color-mode-line)
+
+
+(eval-after-load "flycheck"
+  '(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
 ;;;; helm
 ;;;; this section must be here.
 (add-to-list 'load-path "~/.emacs.d/helm") ;github repo.
@@ -738,11 +750,41 @@ static char * arrow_right[] = {
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (helm-mode 1)
 
+
+;;;;
+;;;; The Solarized colour theme, ported to Emacs.
+;;;; https://github.com/bbatsov/solarized-emacs
+;; make the fringe stand out from the background
+
+(setq solarized-distinct-fringe-background t)
+
+;; make the modeline high contrast
+(setq solarized-high-contrast-mode-line t)
+
+(add-to-list 'load-path "~/.emacs.d/solarized-emacs") ;github repo.
+(require 'solarized)
+
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+(load-theme 'solarized-dark t)
+
+;(add-to-list 'custom-theme-load-path "~/.emacs.d/emacs-color-theme-solarized")
+;(load-theme 'solarized-dark t)
+
+;;;;
+;;;; powerline
+;;;; https://github.com/milkypostman/powerline
+(add-to-list 'load-path "~/.emacs.d/powerline") ;github repo.
+(require 'powerline)
+(powerline-default-theme)
+
+;;;;
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes (quote ("d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" default)))
  '(global-hl-line-mode t)
  '(initial-frame-alist (quote ((top . 10) (left . 410) (width . 130) (height . 58) (fullscreen . maximized))))
  '(show-paren-mode t)
