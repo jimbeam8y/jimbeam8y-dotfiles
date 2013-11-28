@@ -1,6 +1,9 @@
+
 ;;;;;;;; -*- emacs-lisp -*-
-;;ガベッジコレクションを実行するまでの割り当てメモリの閾値を増やす
-(setq gc-cons-threshold (* 50 gc-cons-threshold))
+
+;;; Code:
+;;;; ガベッジコレクションを実行するまでの割り当てメモリの閾値を増やす
+(setq gc-cons-threshold (* 100 gc-cons-threshold))
 ;;ログの記録量を増やす
 (setq message-log-max 10000)
 ;;履歴存数を増やす
@@ -10,15 +13,48 @@
 
 ;;; load-path
 (add-to-list 'load-path "~/.emacs.d/")
-;;; mozc
+
+;; global settings
+(show-paren-mode t)
+(global-linum-mode t)
+(which-function-mode 1)
+(menu-bar-mode 0)
+(tool-bar-mode 0)
+(global-hl-line-mode t)
+(global-hi-lock-mode 1)
+(setq vc-follow-symlinks t)
+
+;; マーク領域を色付け
+(setq transient-mark-mode t)
+;; マウスで選択するとコピーする Emacs 24 ではデフォルトが nil
+(setq mouse-drag-copy-region t)
+
+(global-set-key (kbd "C-m") 'newline-and-indent)
+
+;;; backup file
+(setq make-backup-files t)
+(setq backup-directory-alist
+  (cons (cons "\\.*$" (expand-file-name "~/.emacs.d/backup"))
+    backup-directory-alist))
+
+;;;;
+;;;; mozc
+;;;; via http://d.hatena.ne.jp/syohex/20120126/1327597912
 (require 'mozc)
+
+(setq mozc-leim-title "[I&#9825;Mozc]") ; modeline変更
+
 (set-language-environment "Japanese")
 (setq default-input-method "japanese-mozc")
-; (setq mozc-candidate-style 'overlay)
-(setq mozc-candidate-style 'echo-area)
 (global-set-key (kbd "C-o") 'toggle-input-method)
 
-;; タイトルバーに日時を表示する
+;;;(setq mozc-candidate-style 'echo-area)
+(setq mozc-candidate-style 'overlay)
+
+(prefer-coding-system 'utf-8-unix)      ; 日本語入力のための設定
+
+;;;;
+;;;; タイトルバーに日時を表示する
 (setq display-time-string-forms
       '((format "%s/%s(%s)%s:%s" month day dayname 24-hours minutes)))
 (display-time)
@@ -28,9 +64,8 @@
                display-time-string))
        (remove-hook 'global-mode-string 'display-time-string)))
 
-;;;;;;; Coolな設定
-;;;;;;; via http://sakito.jp/emacs/emacs23.html#id17
-;;;;;;;
+;;;; Coolな設定
+;;;; via http://sakito.jp/emacs/emacs23.html#id17
 ;; 垂直スクロール用のスクロールバーを付けない
 (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
 ;; 背景の透過
@@ -94,49 +129,8 @@
 ;;;;;;;;
 ;;;;;;;;
 
-;; global settings
-(show-paren-mode t)
-(global-linum-mode t)
-(which-function-mode 1)
-(menu-bar-mode 0)
-(tool-bar-mode 0)
-(global-hl-line-mode t)
-(global-hi-lock-mode 1)
-(setq vc-follow-symlinks t)
-(setq hi-lock-file-patterns-policy t)
-;; マーク領域を色付け
-(setq transient-mark-mode t)
-;; マウスで選択するとコピーする Emacs 24 ではデフォルトが nil
-(setq mouse-drag-copy-region t)
-
-(global-set-key (kbd "C-m") 'newline-and-indent)
-
-;;; backup file
-(setq make-backup-files t)
-(setq backup-directory-alist
-  (cons (cons "\\.*$" (expand-file-name "~/.emacs.d/backup"))
-    backup-directory-alist))
-
-;; coding-system
-(add-hook 'shell-mode-hook
-          (lambda ()
-            (set-buffer-process-coding-system 'utf-8-emacs-unix 'utf-8-emacs-unix)
-            ))
-
-(prefer-coding-system 'utf-8-unix)      ; 日本語入力のための設定
-
 (require 'wdired)
 (setq default-file-name-coding-system 'utf-8-unix) ;diredで日本語file名出力
-
-(add-hook 'calendar-load-hook
-          (lambda ()
-            (require 'japanese-holidays)
-            (setq calendar-holidays
-                  (append japanese-holidays local-holidays other-holidays))))
-
-;;; 動かない… Meadow専用か？
-;(require 'gnuserv)
-;(gnuserv-start)
 
 ;;;;;; package manager
 (require 'package)
@@ -145,76 +139,71 @@
 (add-to-list 'package-archives '("ELPA" . "http://tromey.com/elpa/") t)
 (package-initialize)
 
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/auto-install/"))
-(require 'auto-install)
-(auto-install-update-emacswiki-package-name t)
-;(auto-install-compatibility-setup)
 
+;; (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
-(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+;; (unless (require 'el-get nil t)
+;;   (url-retrieve
+;;    "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
+;;    (lambda (s)
+;;      (end-of-buffer)
+;;      (eval-print-last-sexp))))
 
-(unless (require 'el-get nil t)
-  (url-retrieve
-   "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
-   (lambda (s)
-     (end-of-buffer)
-     (eval-print-last-sexp))))
+;; ;; now either el-get is `require'd already, or have been `load'ed by the
+;; ;; el-get installer.
+;; (setq
+;;  el-get-sources
+;;  '(el-get                               ; el-get is self-hosting
+;;    escreen                              ; screen for emacs, C-\ C-h
+;;    php-mode-improved                    ; if you're into php...
+;;    switch-window                        ; takes over C-x o
+;;    auto-complete                        ; complete as you type with overlays
+;;    zencoding-mode                       ; http://www.emacswiki.org/emacs/ZenCoding
 
-;; now either el-get is `require'd already, or have been `load'ed by the
-;; el-get installer.
-(setq
- el-get-sources
- '(el-get                               ; el-get is self-hosting
-   escreen                              ; screen for emacs, C-\ C-h
-   php-mode-improved                    ; if you're into php...
-   switch-window                        ; takes over C-x o
-   auto-complete                        ; complete as you type with overlays
-   zencoding-mode                       ; http://www.emacswiki.org/emacs/ZenCoding
+;;    (:name buffer-move                   ; have to add your own keys
+;;           :after (lambda ()
+;;                    (global-set-key (kbd "<C-S-up>")     'buf-move-up)
+;;                    (global-set-key (kbd "<C-S-down>")   'buf-move-down)
+;;                    (global-set-key (kbd "<C-S-left>")   'buf-move-left)
+;;                    (global-set-key (kbd "<C-S-right>")  'buf-move-right)))
 
-   (:name buffer-move                   ; have to add your own keys
-          :after (lambda ()
-                   (global-set-key (kbd "<C-S-up>")     'buf-move-up)
-                   (global-set-key (kbd "<C-S-down>")   'buf-move-down)
-                   (global-set-key (kbd "<C-S-left>")   'buf-move-left)
-                   (global-set-key (kbd "<C-S-right>")  'buf-move-right)))
+;;    (:name smex                          ; a better (ido like) M-x
+;;           :after (lambda ()
+;;                    (setq smex-save-file "~/.emacs.d/.smex-items")
+;;                    (global-set-key (kbd "M-x") 'smex)
+;;                    (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
 
-   (:name smex                          ; a better (ido like) M-x
-          :after (lambda ()
-                   (setq smex-save-file "~/.emacs.d/.smex-items")
-                   (global-set-key (kbd "M-x") 'smex)
-                   (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
+;;    (:name magit                                 ; git meet emacs, and a binding
+;;           :after (lambda ()
+;;                    (global-set-key (kbd "C-x C-z") 'magit-status)))
 
-   (:name magit                                 ; git meet emacs, and a binding
-          :after (lambda ()
-                   (global-set-key (kbd "C-x C-z") 'magit-status)))
+;;    (:name goto-last-change              ; move pointer back to last change
+;;           :after (lambda ()
+;;                    ;; when using AZERTY keyboard, consider C-x C-_
+;;                    (global-set-key (kbd "C-x C-/") 'goto-last-change)))))
 
-   (:name goto-last-change              ; move pointer back to last change
-          :after (lambda ()
-                   ;; when using AZERTY keyboard, consider C-x C-_
-                   (global-set-key (kbd "C-x C-/") 'goto-last-change)))))
+;; (unless (string-match "apple-darwin" system-configuration)
+;;   (loop for p in '(color-theme          ; nice looking emacs
+;;                    color-theme-tango    ; check out color-theme-solarized
+;;                    )
+;;         do (add-to-list 'el-get-sources p)))
 
-(unless (string-match "apple-darwin" system-configuration)
-  (loop for p in '(color-theme          ; nice looking emacs
-                   color-theme-tango    ; check out color-theme-solarized
-                   )
-        do (add-to-list 'el-get-sources p)))
+;; ;;
+;; ;; Some recipes require extra tools to be installed
+;; ;;
+;; ;; Note: el-get-install requires git, so we know we have at least that.
+;; ;;
+;; (when (el-get-executable-find "cvs")
+;;   (add-to-list 'el-get-sources 'emacs-goodies-el)) ; the debian addons for emacs
 
-;;
-;; Some recipes require extra tools to be installed
-;;
-;; Note: el-get-install requires git, so we know we have at least that.
-;;
-(when (el-get-executable-find "cvs")
-  (add-to-list 'el-get-sources 'emacs-goodies-el)) ; the debian addons for emacs
+;; (when (el-get-executable-find "svn")
+;;   (loop for p in '(psvn                 ; M-x svn-status
+;;                    yasnippet            ; powerful snippet mode
+;;                    )
+;;         do (add-to-list 'el-get-sources p)))
 
-(when (el-get-executable-find "svn")
-  (loop for p in '(psvn                 ; M-x svn-status
-                   yasnippet            ; powerful snippet mode
-                   )
-        do (add-to-list 'el-get-sources p)))
-
-;; install new packages and init already installed packages
-(el-get 'sync)
+;; ;; install new packages and init already installed packages
+;; (el-get 'sync)
 
 ;;;;;; packages
 ;;; color-theme
@@ -289,64 +278,64 @@
 (setq popup-select-window-window-highlight-face
       '(:foreground "white" :background "orange"))
 
-;;; like a 'screen'
-;;; via http://www.morishima.net/~naoto/elscreen-ja/
-;;; code from GitHub.
-(add-to-list 'load-path "~/.emacs.d/elscreen") ;github repo.
-(require 'elscreen)
-(elscreen-start)
-(load "elscreen-gf" "ElScreen-GF" t) ;; TODO GNU GLOBAL で使ってみたい。
-(require 'elscreen-color-theme)
-(require 'elscreen-dired)
-(require 'elscreen-w3m)
-(require 'elscreen-server)
-(require 'elscreen-wl)
+;; ;;; like a 'screen'
+;; ;;; via http://www.morishima.net/~naoto/elscreen-ja/
+;; ;;; code from GitHub.
+;; (add-to-list 'load-path "~/.emacs.d/elscreen") ;github repo.
+;; (require 'elscreen)
+;; (elscreen-start)
+;; (load "elscreen-gf" "ElScreen-GF" t) ;; TODO GNU GLOBAL で使ってみたい。
+;; (require 'elscreen-color-theme)
+;; (require 'elscreen-dired)
+;; (require 'elscreen-w3m)
+;; (require 'elscreen-server)
+;; (require 'elscreen-wl)
 
-(defmacro elscreen-create-automatically (ad-do-it)
-  `(if (not (elscreen-one-screen-p))
-       ,ad-do-it
-     (elscreen-create)
-     (elscreen-notify-screen-modification 'force-immediately)
-     (elscreen-message "New screen is automatically created")))
+;; (defmacro elscreen-create-automatically (ad-do-it)
+;;   `(if (not (elscreen-one-screen-p))
+;;        ,ad-do-it
+;;      (elscreen-create)
+;;      (elscreen-notify-screen-modification 'force-immediately)
+;;      (elscreen-message "New screen is automatically created")))
 
-(defadvice elscreen-next (around elscreen-create-automatically activate)
-  (elscreen-create-automatically ad-do-it))
+;; (defadvice elscreen-next (around elscreen-create-automatically activate)
+;;   (elscreen-create-automatically ad-do-it))
 
-(defadvice elscreen-previous (around elscreen-create-automatically activate)
-  (elscreen-create-automatically ad-do-it))
+;; (defadvice elscreen-previous (around elscreen-create-automatically activate)
+;;   (elscreen-create-automatically ad-do-it))
 
-(defadvice elscreen-toggle (around elscreen-create-automatically activate)
-  (elscreen-create-automatically ad-do-it))
-;;; key bind for elscreen
-(global-unset-key "\C-q")
-(defvar ctl-q-map (make-keymap))
-(define-key global-map (kbd "C-q") ctl-q-map)
-(define-key ctl-q-map (kbd "c") 'elscreen-create)
-(define-key ctl-q-map (kbd "k") 'elscreen-kill)
-(define-key ctl-q-map (kbd "d") 'elscreen-dired)
-(define-key ctl-q-map (kbd "n") 'elscreen-next)
-(define-key ctl-q-map (kbd "C-n") 'elscreen-next)
-(define-key ctl-q-map (kbd "p") 'elscreen-previous)
-(define-key ctl-q-map (kbd "s") 'my-google-search)
-(define-key ctl-q-map (kbd "C-p") 'elscreen-previous)
-(define-key ctl-q-map (kbd "0") 'elscreen-jump-0)
-(define-key ctl-q-map (kbd "1") 'elscreen-jump)
-(define-key ctl-q-map (kbd "2") 'elscreen-jump)
-(define-key ctl-q-map (kbd "3") 'elscreen-jump)
-(define-key ctl-q-map (kbd "4") 'elscreen-jump)
-(define-key ctl-q-map (kbd "5") 'elscreen-jump)
-(define-key ctl-q-map (kbd "6") 'elscreen-jump)
-(define-key ctl-q-map (kbd "7") 'elscreen-jump)
-(define-key ctl-q-map (kbd "8") 'elscreen-jump)
-(define-key ctl-q-map (kbd "9") 'elscreen-jump-9)
-(define-key ctl-q-map (kbd "?") 'elscreen-help)
-(define-key ctl-q-map (kbd "t") 'my-twit)
-(define-key ctl-q-map (kbd "w") 'elscreen-w3m)
-;;;;;;;; ：
-;;(define-key ctl-q-map (kbd "C-a") 'your-favorite-funca)
-;;(define-key ctl-q-map (kbd "C-b") 'your-favorite-funcb)
-(define-key ctl-q-map (kbd "C-q") 'quoted-insert)
-;;(define-key ctl-q-map (kbd "C-z") 'your-favorite-funcz)
+;; (defadvice elscreen-toggle (around elscreen-create-automatically activate)
+;;   (elscreen-create-automatically ad-do-it))
+;; ;;; key bind for elscreen
+;; (global-unset-key "\C-q")
+;; (defvar ctl-q-map (make-keymap))
+;; (define-key global-map (kbd "C-q") ctl-q-map)
+;; (define-key ctl-q-map (kbd "c") 'elscreen-create)
+;; (define-key ctl-q-map (kbd "k") 'elscreen-kill)
+;; (define-key ctl-q-map (kbd "d") 'elscreen-dired)
+;; (define-key ctl-q-map (kbd "n") 'elscreen-next)
+;; (define-key ctl-q-map (kbd "C-n") 'elscreen-next)
+;; (define-key ctl-q-map (kbd "p") 'elscreen-previous)
+;; (define-key ctl-q-map (kbd "s") 'my-google-search)
+;; (define-key ctl-q-map (kbd "C-p") 'elscreen-previous)
+;; (define-key ctl-q-map (kbd "0") 'elscreen-jump-0)
+;; (define-key ctl-q-map (kbd "1") 'elscreen-jump)
+;; (define-key ctl-q-map (kbd "2") 'elscreen-jump)
+;; (define-key ctl-q-map (kbd "3") 'elscreen-jump)
+;; (define-key ctl-q-map (kbd "4") 'elscreen-jump)
+;; (define-key ctl-q-map (kbd "5") 'elscreen-jump)
+;; (define-key ctl-q-map (kbd "6") 'elscreen-jump)
+;; (define-key ctl-q-map (kbd "7") 'elscreen-jump)
+;; (define-key ctl-q-map (kbd "8") 'elscreen-jump)
+;; (define-key ctl-q-map (kbd "9") 'elscreen-jump-9)
+;; (define-key ctl-q-map (kbd "?") 'elscreen-help)
+;; (define-key ctl-q-map (kbd "t") 'my-twit)
+;; (define-key ctl-q-map (kbd "w") 'elscreen-w3m)
+;; ;;;;;;;; ：
+;; ;;(define-key ctl-q-map (kbd "C-a") 'your-favorite-funca)
+;; ;;(define-key ctl-q-map (kbd "C-b") 'your-favorite-funcb)
+;; (define-key ctl-q-map (kbd "C-q") 'quoted-insert)
+;; ;;(define-key ctl-q-map (kbd "C-z") 'your-favorite-funcz)
 
 ;;; w3m
 (add-to-list 'load-path "~/.emacs.d/emacs-w3m") ;; Development Version
@@ -382,67 +371,17 @@
 ;; Chrome text area edit
 (require 'edit-server)
 (edit-server-start)
-(setq edit-server-new-frame nil)
+(setq edit-server-new-frame t)
 
 ;; Wanderlust
-(autoload 'wl "wl" "Wanderlust" t)
-(require 'mime-w3m)
-
-(require 'edbi)
-(autoload 'edbi:open-db-viewer "edbi")
+;calistがないとか言うようになった
+;(autoload 'wl "wl" "Wanderlust" t)
+;(require 'mime-w3m)
 
 ;;; Magit
 (add-to-list 'load-path "~/.emacs.d/magit") ;github repo.
 (require 'magit)
 
-;;;;; e2em
-;;;;;
-;;;;;最小の e2wm 設定例
-;; with Magit
-;(auto-install-from-url "https://github.com/kiwanami/emacs-window-manager/raw/master/e2wm-vcs.el")
-(require 'e2wm-config)
-
-(global-set-key (kbd "M-+") 'e2wm:start-management)
-
-(load "e2wm-edbi-pre")
-
-(add-to-list 'load-path "~/.emacs.d/emacs-calfw") ;github repo.
-(require 'calfw)
-(require 'calfw-ical)
-(defun open-my-ical ()
-  (interactive)
-  (cfw:open-ical-calendar "http://www.google.com/calendar/ical/kawano%40yoshidumi.co.jp/public/basic.ics")
- (cfw:open-ical-calendar "https://www.google.com/calendar/ical/hjmkawano%40gmail.com/public/basic.ics")
-  (cfw:open-ical-calendar "https://www.google.com/calendar/ical/jimbeam8y%40gmail.com/public/basic.ics")
-  )
-;; 月
-(setq calendar-month-name-array
-  ["January" "February" "March"     "April"   "May"      "June"
-   "July"    "August"   "September" "October" "November" "December"])
-;;; via http://sheephead.homelinux.org/2011/01/19/6571/
-(custom-set-faces
- '(cfw:face-title ((t (:foreground "#f0dfaf" :weight bold :height 2.0 :inherit variable-pitch))))
- '(cfw:face-header ((t (:foreground "#d0bf8f" :weight bold))))
- '(cfw:face-sunday ((t :foreground "#cc9393" :background "grey10" :weight bold)))
- '(cfw:face-saturday ((t :foreground "#8cd0d3" :background "grey10" :weight bold)))
- '(cfw:face-holiday ((t :background "grey10" :foreground "#8c5353" :weight bold)))
- '(cfw:face-default-content ((t :foreground "#bfebbf")))
- '(cfw:face-regions ((t :foreground "#366060")))
- '(cfw:face-day-title ((t :background "grey10")))
- '(cfw:face-periods ((t :foreground "#8cd0d3")))
- '(cfw:face-today-title ((t :background "#7f9f7f" :weight bold)))
- '(cfw:face-today ((t :background: "grey10" :weight bold)))
- '(cfw:face-select ((t :background "#2f2f2f"))))
-
-;; 曜日
-(setq calendar-day-name-array
-      ["Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday"])
-
-;; 週の先頭の曜日
-(setq calendar-week-start-day 1) ; 日曜日は0, 月曜日は1
-
-;;;; 動かない
-;(require 'backlog)
 
 ;;;;; mode hook
 ;; Text
@@ -457,12 +396,15 @@
           (lambda ()
             (whitespace-mode)
             ))
+(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
 
 (add-hook 'c-mode-common-hook
           '(lambda()
              (gtags-mode 1)
              (gtags-make-complete-list)
              ))
+(add-hook 'c-mode-common-hook 'flycheck-mode)
+
 
 ;; Java
 (add-hook 'java-mode-hook
@@ -478,6 +420,12 @@
             (message "hook")
             (setq tab-width 4)
             ))
+
+;; Python
+(add-hook 'python-mode-hook 'flycheck-mode)
+
+;; Ruby
+(add-hook 'ruby-mode-hook 'flycheck-mode)
 
 ;; web-mode
 (require 'web-mode)
@@ -532,17 +480,56 @@
 (setq org-src-fontify-natively t)
 
 ;;;;
-;;;; hiwin
-;;;; via http://d.hatena.ne.jp/tomoya/20100607/1275862600
-; (auto-install-from-url "http://github.com/tomoya/hiwin-mode/raw/master/hiwin.el")
-(require 'hiwin)
-(hiwin-mode)
+;;;; GNU GLOBAL
+(add-to-list 'load-path "~/.emacs.d/gtags") ;github repo.
+(autoload 'gtags-mode "gtags" "" t)
+(setq gtags-mode-hook
+      '(lambda ()
+         (local-set-key "\M-t" 'gtags-find-tag)
+         (local-set-key "\M-r" 'gtags-find-rtag)
+         (local-set-key "\M-s" 'gtags-find-symbol)
+         (local-set-key "\C-t" 'gtags-pop-stack)
+         ))
+
+(add-hook 'c-mode-common-hook
+          '(lambda()
+             (gtags-mode 1)
+             (gtags-make-complete-list)
+             ))
+
+;;;;
+;;;; JDEE
+(add-to-list 'load-path "~/.emacs.d/jdee/lisp") ;github repo.
+(load "jde-autoload")
+
+(defun my-jde-mode-hook ()
+  (require 'jde)
+
+  (setq jde-build-function 'jde-ant-build) ; ビルドにantを利用する
+  (setq jde-ant-read-target t)             ; targetを問い合わせる
+  (setq jde-ant-enable-find t)             ; antに-findオプションを指定する(要らないかも)
+
+  ;; complilationバッファを自動的にスクロールさせる
+  (setq compilation-ask-about-save nil)
+  (setq compilation-scroll-output 'first-error)
+
+  (define-key jde-mode-map (kbd "C-c C-v .") 'jde-complete-minibuf)
+  )
+
+(add-hook 'jde-mode-hook 'my-jde-mode-hook)
+
+;;;;
+;;;; JSON
+;;;; via Emacs で JSON を Flymake する http://yak-shaver.blogspot.jp/2013/06/emacs-json-flymake.html
+(require 'json-mode)
+(add-to-list 'auto-mode-alist '("\\.json$" . json-mode))
+
+(require 'flymake-json)
+(add-hook 'json-mode-hook 'flymake-json-load)
 
 ;;;;
 ;;;; PowerLine
 (require 'powerline)
-
-;; powerline.el
 (defun arrow-right-xpm (color1 color2)
   "Return an XPM right arrow string representing."
   (format "/* XPM */
@@ -596,38 +583,43 @@ static char * arrow_right[] = {
 \"           .\"};"  color2 color1))
 
 
-(defconst color1 "#FF6699")
-(defconst color2 "#FF0066")
+(defconst color1 "NavyBlue")
+(defconst color2 "RoyalBlue")
 (defconst color3 "#4682b4")
 (defconst color4 "#CDC0B0")
 (defconst color5 "#0000cd")
+(defconst color6 "#8b008b")
 
 (defvar arrow-right-1 (create-image (arrow-right-xpm color1 color2) 'xpm t :ascent 'center))
 (defvar arrow-right-2 (create-image (arrow-right-xpm color2 color5) 'xpm t :ascent 'center))
-(defvar arrow-right-3 (create-image (arrow-right-xpm color5 "None") 'xpm t :ascent 'center))
+(defvar arrow-right-3 (create-image (arrow-right-xpm color5 color6) 'xpm t :ascent 'center))
+(defvar arrow-right-4 (create-image (arrow-right-xpm color6 "None") 'xpm t :ascent 'center))
 (defvar arrow-left-1  (create-image (arrow-left-xpm color2 color1) 'xpm t :ascent 'center))
 (defvar arrow-left-2  (create-image (arrow-left-xpm "None" color2) 'xpm t :ascent 'center))
 
 (setq-default mode-line-format
-(list '(:eval (concat (propertize " %*  %b " 'face 'mode-line-color-1)
-		      (propertize " " 'display arrow-right-1)))
-      '(:eval (concat (propertize " %Z " 'face 'mode-line-color-2)
-		      (propertize " " 'display arrow-right-2)))
-      '(:eval (concat (propertize " %m " 'face 'mode-line-color-3)
-		      (propertize " " 'display arrow-right-3)))
+ (list
+  '(:eval (concat (propertize " %Z " 'face 'mode-line-color-1)
+		  (propertize "  " 'display arrow-right-1)))
+  '(:eval (concat (propertize " %* %b " 'face 'mode-line-color-2)
+		  (propertize " " 'display arrow-right-2)))
+  '(:eval (concat (propertize " %m " 'face 'mode-line-color-3)
+		  (propertize " " 'display arrow-right-3)))
+  '(:eval (concat (propertize " " vc-mode " " 'face 'mode-line-color-4)
+		  (propertize " " 'display arrow-right-4)))
 
-      mode-line-process
-      minor-mode-alist
+  mode-line-process minor-mode-alist mode-line-misc-info
 
-	;; Justify right by filling with spaces to right fringe - 16
-        ;; (16 should be computed rahter than hardcoded)
-        '(:eval (propertize " " 'display '((space :align-to (- right-fringe 17)))))
+  ;; Justify right by filling with spaces to right fringe - 16
+  ;; (16 should be computed rahter than hardcoded)
+  '(:eval (propertize " " 'display '((space :align-to (- right-fringe 16)))))
 
-        '(:eval (concat (propertize " " 'display arrow-left-2)
-                        (propertize " %p " 'face 'mode-line-color-2)))
-        '(:eval (concat (propertize " " 'display arrow-left-1)
-                        (propertize "%4l:%2c  " 'face 'mode-line-color-1)))
-	))
+  '(:eval (concat (propertize " " 'display arrow-left-2)
+		  (propertize " %p " 'face 'mode-line-color-2)))
+  '(:eval (concat (propertize " " 'display arrow-left-1)
+		  (propertize "%4l:%2c  " 'face 'mode-line-color-1)))
+  )
+ )
 
 (make-face 'mode-line-color-1)
 (set-face-attribute 'mode-line-color-1 nil
@@ -644,20 +636,107 @@ static char * arrow_right[] = {
                     :foreground "#fff"
                     :background color5)
 
-(set-face-attribute 'mode-line nil
-		    :foreground "black")
+(make-face 'mode-line-color-4)
+(set-face-attribute 'mode-line-color-4 nil
+                    :foreground "#fff"
+                    :background color6)
 
+(set-face-attribute 'mode-line nil
+                    :foreground "black")
+
+;;;;
+;;;; tips: Emacs24 で動作が重くなったのを改善
+;;;; via http://www.kaichan.mydns.jp/~kai/orgweb/init.html
+(setq-default bidi-display-reordering nil
+              bidi-paragraph-direction (quote left-to-right))
+
+;; faces
+(set-face-attribute 'mozc-cand-overlay-even-face 'nil
+                    :background "midnight blue" :foreground "white")
+(set-face-attribute 'mozc-cand-overlay-odd-face 'nil
+                    :background "midnight blue" :foreground "white")
+
+;;;;; e2em
+;;;;;
+(add-to-list 'load-path "~/.emacs.d/emacs-window-layout") ;github repo.
+(add-to-list 'load-path "~/.emacs.d/emacs-window-manager") ;github repo.
+(require 'e2wm-my-config)
+
+(global-set-key (kbd "M-+") 'e2wm:start-management)
+
+;; with edbi
+(require 'edbi)
+(autoload 'edbi:open-db-viewer "edbi")
+
+(load "e2wm-edbi-pre")
+
+;; calfw
+(add-to-list 'load-path "~/.emacs.d/emacs-calfw") ;github repo.
+(require 'calfw)
+(require 'calfw-ical)
+(defun open-my-ical ()
+  (interactive)
+  (cfw:open-ical-calendar "http://www.google.com/calendar/ical/kawano%40yoshidumi.co.jp/public/basic.ics")
+ (cfw:open-ical-calendar "https://www.google.com/calendar/ical/hjmkawano%40gmail.com/public/basic.ics")
+  (cfw:open-ical-calendar "https://www.google.com/calendar/ical/jimbeam8y%40gmail.com/public/basic.ics")
+  )
+;; 月
+(setq calendar-month-name-array
+  ["January" "February" "March"     "April"   "May"      "June"
+   "July"    "August"   "September" "October" "November" "December"])
+;;; via http://sheephead.homelinux.org/2011/01/19/6571/
+(custom-set-faces
+ '(cfw:face-title ((t (:foreground "#f0dfaf" :weight bold :height 2.0 :inherit variable-pitch))))
+ '(cfw:face-header ((t (:foreground "#d0bf8f" :weight bold))))
+ '(cfw:face-sunday ((t :foreground "#cc9393" :background "grey10" :weight bold)))
+ '(cfw:face-saturday ((t :foreground "#8cd0d3" :background "grey10" :weight bold)))
+ '(cfw:face-holiday ((t :background "grey10" :foreground "#8c5353" :weight bold)))
+ '(cfw:face-default-content ((t :foreground "#bfebbf")))
+ '(cfw:face-regions ((t :foreground "#366060")))
+ '(cfw:face-day-title ((t :background "grey10")))
+ '(cfw:face-periods ((t :foreground "#8cd0d3")))
+ '(cfw:face-today-title ((t :background "#7f9f7f" :weight bold)))
+ '(cfw:face-today ((t :background: "grey10" :weight bold)))
+ '(cfw:face-select ((t :background "#2f2f2f"))))
+
+;; 曜日
+(setq calendar-day-name-array
+      ["Sunday" "Monday" "Tuesday" "Wednesday" "Thursday" "Friday" "Saturday"])
+
+;; 週の先頭の曜日
+(setq calendar-week-start-day 1) ; 日曜日は0, 月曜日は1
+
+;; ;;;;
+;; ;;;; smartrep.el
+;; ;;;; via http://sheephead.homelinux.org/2011/12/19/6930/
+;; (require 'smartrep)
+
+;; (eval-after-load "org"
+;;         '(progn
+;;            (smartrep-define-key
+;;             org-mode-map "C-c" '(("C-n" . (lambda ()
+;;                                             (outline-next-visible-heading 1)))
+;;                                  ("C-p" . (lambda ()
+;;                                             (outline-previous-visible-heading 1)))))))
+
+;; ;; flymake
+;; (smartrep-define-key
+;;     global-map "M-g" '(("M-n" . 'flymake-goto-next-error)
+;;                        ("M-p" . 'flymake-goto-prev-error)))
 
 ;;;; helm
 ;;;; this section must be here.
+(add-to-list 'load-path "~/.emacs.d/helm") ;github repo.
 (require 'helm-config)
-(require 'helm-migemo)
-(setq helm-use-migemo t)
+;; (require 'helm-migemo)
+;; (setq helm-use-migemo t)
 
-(helm-mode 1)
+
 (global-set-key (kbd "C-c h") 'helm-mini)
+(global-set-key (kbd "C-c o") 'helm-occur)
 (define-key ctl-x-map "\C-f" 'helm-for-files)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+(helm-mode 1)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -668,3 +747,6 @@ static char * arrow_right[] = {
  '(initial-frame-alist (quote ((top . 10) (left . 410) (width . 130) (height . 58) (fullscreen . maximized))))
  '(show-paren-mode t)
  '(vc-follow-symlinks t))
+
+(provide 'dot)
+;;; dot.emacs ends here
