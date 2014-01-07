@@ -1,4 +1,5 @@
-
+;;; package --- Summary
+;;; Commentary:
 ;;;;;;;; -*- emacs-lisp -*-
 
 ;;; Code:
@@ -13,6 +14,24 @@
 
 ;;; load-path
 (add-to-list 'load-path "~/.emacs.d/")
+
+;; ;;;;
+;; ;;;; The Solarized colour theme, ported to Emacs.
+;; ;;;; https://github.com/bbatsov/solarized-emacs
+;; ;; make the fringe stand out from the background
+;; (setq solarized-distinct-fringe-background t)
+
+;; ;; make the modeline high contrast
+;; (setq solarized-high-contrast-mode-line t)
+
+;; (add-to-list 'load-path "~/.emacs.d/solarized-emacs") ;github repo.
+;; (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
+;; (require 'solarized)
+;; (load-theme 'solarized-dark t)
+
+
+;(load-theme 'deeper-blue t)
+(load-theme 'wombat t)
 
 ;; global settings
 (show-paren-mode t)
@@ -37,20 +56,19 @@
   (cons (cons "\\.*$" (expand-file-name "~/.emacs.d/backup"))
     backup-directory-alist))
 
+;;; IME
+(set-language-environment "Japanese")
+(global-set-key (kbd "C-o") 'toggle-input-method)
+(prefer-coding-system 'utf-8-unix)      ; 日本語入力のための設定
+
 ;;;;
 ;;;; mozc
 ;;;; via http://d.hatena.ne.jp/syohex/20120126/1327597912
+;(setq mozc-leim-title "[I&#9825;Mozc]") ; modeline変更
 (require 'mozc)
-(setq mozc-leim-title "[I&#9825;Mozc]") ; modeline変更
-
-(set-language-environment "Japanese")
 (setq default-input-method "japanese-mozc")
-(global-set-key (kbd "C-o") 'toggle-input-method)
-
 ;;;(setq mozc-candidate-style 'echo-area)
 (setq mozc-candidate-style 'overlay)
-
-(prefer-coding-system 'utf-8-unix)      ; 日本語入力のための設定
 
 ;;;;
 ;;;; タイトルバーに日時を表示する
@@ -139,71 +157,6 @@
 (package-initialize)
 
 
-;; (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
-
-;; (unless (require 'el-get nil t)
-;;   (url-retrieve
-;;    "https://github.com/dimitri/el-get/raw/master/el-get-install.el"
-;;    (lambda (s)
-;;      (end-of-buffer)
-;;      (eval-print-last-sexp))))
-
-;; ;; now either el-get is `require'd already, or have been `load'ed by the
-;; ;; el-get installer.
-;; (setq
-;;  el-get-sources
-;;  '(el-get                               ; el-get is self-hosting
-;;    escreen                              ; screen for emacs, C-\ C-h
-;;    php-mode-improved                    ; if you're into php...
-;;    switch-window                        ; takes over C-x o
-;;    auto-complete                        ; complete as you type with overlays
-;;    zencoding-mode                       ; http://www.emacswiki.org/emacs/ZenCoding
-
-;;    (:name buffer-move                   ; have to add your own keys
-;;           :after (lambda ()
-;;                    (global-set-key (kbd "<C-S-up>")     'buf-move-up)
-;;                    (global-set-key (kbd "<C-S-down>")   'buf-move-down)
-;;                    (global-set-key (kbd "<C-S-left>")   'buf-move-left)
-;;                    (global-set-key (kbd "<C-S-right>")  'buf-move-right)))
-
-;;    (:name smex                          ; a better (ido like) M-x
-;;           :after (lambda ()
-;;                    (setq smex-save-file "~/.emacs.d/.smex-items")
-;;                    (global-set-key (kbd "M-x") 'smex)
-;;                    (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
-
-;;    (:name magit                                 ; git meet emacs, and a binding
-;;           :after (lambda ()
-;;                    (global-set-key (kbd "C-x C-z") 'magit-status)))
-
-;;    (:name goto-last-change              ; move pointer back to last change
-;;           :after (lambda ()
-;;                    ;; when using AZERTY keyboard, consider C-x C-_
-;;                    (global-set-key (kbd "C-x C-/") 'goto-last-change)))))
-
-;; (unless (string-match "apple-darwin" system-configuration)
-;;   (loop for p in '(color-theme          ; nice looking emacs
-;;                    color-theme-tango    ; check out color-theme-solarized
-;;                    )
-;;         do (add-to-list 'el-get-sources p)))
-
-;; ;;
-;; ;; Some recipes require extra tools to be installed
-;; ;;
-;; ;; Note: el-get-install requires git, so we know we have at least that.
-;; ;;
-;; (when (el-get-executable-find "cvs")
-;;   (add-to-list 'el-get-sources 'emacs-goodies-el)) ; the debian addons for emacs
-
-;; (when (el-get-executable-find "svn")
-;;   (loop for p in '(psvn                 ; M-x svn-status
-;;                    yasnippet            ; powerful snippet mode
-;;                    )
-;;         do (add-to-list 'el-get-sources p)))
-
-;; ;; install new packages and init already installed packages
-;; (el-get 'sync)
-
 ;;;;;; packages
 ;; ;;; color-theme
 ;; ;;; via http://d.hatena.ne.jp/fatrow/20101025/emacs_color_theme
@@ -229,33 +182,6 @@
 (unless (server-running-p)
   (server-start))
 
-;;; twitter
-(require 'twittering-mode)
-(setq twittering-use-master-password t)
-(setq twittering-icon-mode t)
-(setq twittering-display-remaining t)
-(setq twittering-initial-timeline-spec-string
-      '("jimbeam8y/friends"))
-
-(defun my-twit ()
-  (interactive)
-  (elscreen-create)
-  (twit)
-  (cond
-   ((twittering-account-authorized-p)
-    (switch-to-buffer "jimbeam8y/friends")
-    (other-window 1)
-    )
-   (t
-    (delete-other-windows))))
-
-(add-hook 'twittering-new-tweets-hook (lambda ()
-   (let ((n twittering-new-tweets-count))
-     (start-process "twittering-notify" nil "notify-send"
-                    "-i" "/usr/share/pixmaps/gnome-emacs.png"
-                    "New tweets"
-                    (format "You have %d new tweet%s"
-                            n (if (> n 1) "s" ""))))))
 ;;; recentf
 (require 'recentf)
 (recentf-mode 1)
@@ -361,12 +287,6 @@
                      (or w3m-current-titlew3m-current-url))
              t)))
 
-(defun my-google-search ()
-  (interactive)
-  (elscreen-create)
-  (elscreen-w3m-initialize)
-  )
-
 ;; Chrome text area edit
 (require 'edit-server)
 (edit-server-start)
@@ -428,6 +348,15 @@
 ;; CSS
 (add-hook 'css-mode-hook 'flycheck-mode)
 
+;; JavaScript
+(add-hook 'js-mode-hook 'flycheck-mode)
+(add-hook 'javascipy-mode-hook
+          (lambda ()
+            (message "hook")
+            (setq tab-width 2)
+            (setq indent-tabs-mode t)
+            (setq c-basic-offset 2)))
+
 ;; web-mode
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
@@ -441,15 +370,21 @@
 ;;; インデント数
 (defun web-mode-hook ()
   "Hooks for Web mode."
-  (setq web-mode-html-offset   2)
-  (setq web-mode-css-offset    2)
-  (setq web-mode-script-offset 2)
-  (setq web-mode-php-offset    2)
-  (setq web-mode-java-offset   2)
-  (setq web-mode-asp-offset    2))
+  (setq tab-width 2)
+  (setq web-mode-indent-style 2)
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-style-padding 1)
+  (setq web-mode-script-padding 1)
+  (setq web-mode-block-padding 0)
+  (setq web-mode-comment-style 2)
+  (set-face-attribute 'web-mode-css-rule-face nil :foreground "Pink3")
+  (setq web-mode-enable-comment-keywords t)
+  (setq web-mode-enable-current-element-highlight t)
+  )
 (add-hook 'web-mode-hook 'web-mode-hook)
 (add-hook 'web-mode-hook 'flycheck-mode)
-
 
 ;;;;
 ;;;; tips for Ubuntu
@@ -502,24 +437,24 @@
 
 ;;;;
 ;;;; JDEE
-(add-to-list 'load-path "~/.emacs.d/jdee/lisp") ;github repo.
-(load "jde-autoload")
+;; (add-to-list 'load-path "~/.emacs.d/jdee/lisp") ;github repo.
+;; (load "jde-autoload")
 
-(defun my-jde-mode-hook ()
-  (require 'jde)
+;; (defun my-jde-mode-hook ()
+;;   (require 'jde)
 
-  (setq jde-build-function 'jde-ant-build) ; ビルドにantを利用する
-  (setq jde-ant-read-target t)             ; targetを問い合わせる
-  (setq jde-ant-enable-find t)             ; antに-findオプションを指定する(要らないかも)
+;;   (setq jde-build-function 'jde-ant-build) ; ビルドにantを利用する
+;;   (setq jde-ant-read-target t)             ; targetを問い合わせる
+;;   (setq jde-ant-enable-find t)             ; antに-findオプションを指定する(要らないかも)
 
-  ;; complilationバッファを自動的にスクロールさせる
-  (setq compilation-ask-about-save nil)
-  (setq compilation-scroll-output 'first-error)
+;;   ;; complilationバッファを自動的にスクロールさせる
+;;   (setq compilation-ask-about-save nil)
+;;   (setq compilation-scroll-output 'first-error)
 
-  (define-key jde-mode-map (kbd "C-c C-v .") 'jde-complete-minibuf)
-  )
+;;   (define-key jde-mode-map (kbd "C-c C-v .") 'jde-complete-minibuf)
+;;   )
 
-(add-hook 'jde-mode-hook 'my-jde-mode-hook)
+;; (add-hook 'jde-mode-hook 'my-jde-mode-hook)
 
 ;;;;
 ;;;; JSON
@@ -529,123 +464,6 @@
 
 (require 'flymake-json)
 (add-hook 'json-mode-hook 'flymake-json-load)
-
-;; ;;;;
-;; ;;;; PowerLine
-;; (require 'powerline)
-;; (defun arrow-right-xpm (color1 color2)
-;;   "Return an XPM right arrow string representing."
-;;   (format "/* XPM */
-;; static char * arrow_right[] = {
-;; \"12 18 2 1\",
-;; \". c %s\",
-;; \"  c %s\",
-;; \".           \",
-;; \"..          \",
-;; \"...         \",
-;; \"....        \",
-;; \".....       \",
-;; \"......      \",
-;; \".......     \",
-;; \"........    \",
-;; \".........   \",
-;; \".........   \",
-;; \"........    \",
-;; \".......     \",
-;; \"......      \",
-;; \".....       \",
-;; \"....        \",
-;; \"...         \",
-;; \"..          \",
-;; \".           \"};"  color1 color2))
-
-;; (defun arrow-left-xpm (color1 color2)
-;;   "Return an XPM right arrow string representing."
-;;   (format "/* XPM */
-;; static char * arrow_right[] = {
-;; \"12 18 2 1\",
-;; \". c %s\",
-;; \"  c %s\",
-;; \"           .\",
-;; \"          ..\",
-;; \"         ...\",
-;; \"        ....\",
-;; \"       .....\",
-;; \"      ......\",
-;; \"     .......\",
-;; \"    ........\",
-;; \"   .........\",
-;; \"   .........\",
-;; \"    ........\",
-;; \"     .......\",
-;; \"      ......\",
-;; \"       .....\",
-;; \"        ....\",
-;; \"         ...\",
-;; \"          ..\",
-;; \"           .\"};"  color2 color1))
-
-
-;; (defconst color1 "NavyBlue")
-;; (defconst color2 "RoyalBlue")
-;; (defconst color3 "#4682b4")
-;; (defconst color4 "#CDC0B0")
-;; (defconst color5 "#0000cd")
-;; (defconst color6 "#8b008b")
-
-;; (defvar arrow-right-1 (create-image (arrow-right-xpm color1 color2) 'xpm t :ascent 'center))
-;; (defvar arrow-right-2 (create-image (arrow-right-xpm color2 color5) 'xpm t :ascent 'center))
-;; (defvar arrow-right-3 (create-image (arrow-right-xpm color5 color6) 'xpm t :ascent 'center))
-;; (defvar arrow-right-4 (create-image (arrow-right-xpm color6 "None") 'xpm t :ascent 'center))
-;; (defvar arrow-left-1  (create-image (arrow-left-xpm color2 color1) 'xpm t :ascent 'center))
-;; (defvar arrow-left-2  (create-image (arrow-left-xpm "None" color2) 'xpm t :ascent 'center))
-
-;; (setq-default mode-line-format
-;;  (list
-;;   '(:eval (concat (propertize " %Z " 'face 'mode-line-color-1)
-;; 		  (propertize "  " 'display arrow-right-1)))
-;;   '(:eval (concat (propertize " %* %b " 'face 'mode-line-color-2)
-;; 		  (propertize " " 'display arrow-right-2)))
-;;   '(:eval (concat (propertize " %m " 'face 'mode-line-color-3)
-;; 		  (propertize " " 'display arrow-right-3)))
-;;   '(:eval (concat (propertize " " vc-mode " " 'face 'mode-line-color-4)
-;; 		  (propertize " " 'display arrow-right-4)))
-
-;;   mode-line-process minor-mode-alist mode-line-misc-info
-
-;;   ;; Justify right by filling with spaces to right fringe - 16
-;;   ;; (16 should be computed rahter than hardcoded)
-;;   '(:eval (propertize " " 'display '((space :align-to (- right-fringe 16)))))
-
-;;   '(:eval (concat (propertize " " 'display arrow-left-2)
-;; 		  (propertize " %p " 'face 'mode-line-color-2)))
-;;   '(:eval (concat (propertize " " 'display arrow-left-1)
-;; 		  (propertize "%4l:%2c  " 'face 'mode-line-color-1)))
-;;   )
-;;  )
-
-;; (make-face 'mode-line-color-1)
-;; (set-face-attribute 'mode-line-color-1 nil
-;;                     :foreground "#fff"
-;;                     :background color1)
-
-;; (make-face 'mode-line-color-2)
-;; (set-face-attribute 'mode-line-color-2 nil
-;;                     :foreground "#fff"
-;;                     :background color2)
-
-;; (make-face 'mode-line-color-3)
-;; (set-face-attribute 'mode-line-color-3 nil
-;;                     :foreground "#fff"
-;;                     :background color5)
-
-;; (make-face 'mode-line-color-4)
-;; (set-face-attribute 'mode-line-color-4 nil
-;;                     :foreground "#fff"
-;;                     :background color6)
-
-;; (set-face-attribute 'mode-line nil
-;;                     :foreground "black")
 
 ;;;;
 ;;;; tips: Emacs24 で動作が重くなったのを改善
@@ -704,7 +522,8 @@
  '(cfw:face-sunday ((t :foreground "#cc9393" :background "grey10" :weight bold)))
  '(cfw:face-title ((t (:foreground "#f0dfaf" :weight bold :height 2.0 :inherit variable-pitch))))
  '(cfw:face-today ((t :background: "grey10" :weight bold)))
- '(cfw:face-today-title ((t :background "#7f9f7f" :weight bold))))
+ '(cfw:face-today-title ((t :background "#7f9f7f" :weight bold)))
+ '(which-func ((t (:background "navy" :foreground "white")))))
 
 ;; 曜日
 (setq calendar-day-name-array
@@ -726,6 +545,58 @@
 ;;                                  ("C-p" . (lambda ()
 ;;                                             (outline-previous-visible-heading 1)))))))
 
+
+;;;;
+;;;; 拾い物
+;;;; via http://d.hatena.ne.jp/kitokitoki/20091129/p1
+;;;; →こっちのほうがいいかもしれないのであとで導入する。
+;;;;  Emacs で SQL を整形する: http://dev.ariel-networks.com/Members/matsuyama/sql-beautifying-in-emacs/
+;;;; →モードそのものはここでちゃんと使えるようにする。
+;;;;  sql-mode: Emacs から SQL 文を実行する: http://www.sixnine.net/roadside/sqlmode.html
+
+(defun sqlf (start end)
+  "リージョンのSQLを整形する"
+  (interactive "r")
+  (let ((case-fold-search t))
+    (let* ((s (buffer-substring-no-properties start end))
+           (s (replace-regexp-in-string "\\(select \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(update \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(insert into \\)\\(fuga\\)\\(fuga\\)" "\n\\2\n  " s))
+           (s (replace-regexp-in-string "\\(delete from \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(create table \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(alter table \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(drop constraint \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(from \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(exists \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(where \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(values \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(order by \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(group by \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(having \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(left join \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(left outer join )\\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(right join \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(right outer join \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(inner join \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(cross join \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(union join \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(and \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(or \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(any \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(on update restrict \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(on update cascade \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(on update set null \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(on update no action \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(on delete restrict \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(on delete cascade \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(on delete set null \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(on delete no action \\)" "\n\\1\n  " s))
+           (s (replace-regexp-in-string "\\(,\\)" "\\1\n  " s)))
+    (save-excursion
+      (insert s)))))
+
+
+
 ;; ;; flymake
 ;; (smartrep-define-key
 ;;     global-map "M-g" '(("M-n" . 'flymake-goto-next-error)
@@ -736,6 +607,13 @@
 
 (eval-after-load "flycheck"
   '(add-hook 'flycheck-mode-hook 'flycheck-color-mode-line-mode))
+
+
+;;;; Markdown
+(autoload 'markdown-mode "markdown-mode.el" "Major mode for editing Markdown files" t)
+(setq auto-mode-alist (cons '("\\.markdown" . markdown-mode) auto-mode-alist))
+
+
 ;;;; helm
 ;;;; this section must be here.
 (add-to-list 'load-path "~/.emacs.d/helm") ;github repo.
@@ -743,39 +621,12 @@
 ;; (require 'helm-migemo)
 ;; (setq helm-use-migemo t)
 
-
 (global-set-key (kbd "C-c h") 'helm-mini)
 (global-set-key (kbd "C-c o") 'helm-occur)
-(define-key ctl-x-map "\C-f" 'helm-for-files)
+(global-set-key (kbd "C-c f") 'helm-occur)
+; (define-key ctl-x-map "\C-f" 'helm-for-files)
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (helm-mode 1)
-
-
-;;;;
-;;;; The Solarized colour theme, ported to Emacs.
-;;;; https://github.com/bbatsov/solarized-emacs
-;; make the fringe stand out from the background
-
-(setq solarized-distinct-fringe-background t)
-
-;; make the modeline high contrast
-(setq solarized-high-contrast-mode-line t)
-
-(add-to-list 'load-path "~/.emacs.d/solarized-emacs") ;github repo.
-(require 'solarized)
-
-(add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-(load-theme 'solarized-dark t)
-
-;(add-to-list 'custom-theme-load-path "~/.emacs.d/emacs-color-theme-solarized")
-;(load-theme 'solarized-dark t)
-
-;;;;
-;;;; powerline
-;;;; https://github.com/milkypostman/powerline
-(add-to-list 'load-path "~/.emacs.d/powerline") ;github repo.
-(require 'powerline)
-(powerline-default-theme)
 
 ;;;;
 
@@ -784,7 +635,6 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("d677ef584c6dfc0697901a44b885cc18e206f05114c8a3b7fde674fce6180879" "8aebf25556399b58091e533e455dd50a6a9cba958cc4ebb0aab175863c25b9a4" "e16a771a13a202ee6e276d06098bc77f008b73bbac4d526f160faa2d76c1dd0e" default)))
  '(global-hl-line-mode t)
  '(initial-frame-alist (quote ((top . 10) (left . 410) (width . 130) (height . 58) (fullscreen . maximized))))
  '(show-paren-mode t)
