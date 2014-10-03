@@ -1,6 +1,5 @@
-;;; package --- Summary
+;;; package --- Summary -*- emacs-lisp -*-
 ;;; Commentary:
-;;;;;;;; -*- emacs-lisp -*-
 
 ;;; Code:
 ;;;; ガベッジコレクションを実行するまでの割り当てメモリの閾値を増やす
@@ -14,21 +13,6 @@
 
 ;;; load-path
 (add-to-list 'load-path "~/.emacs.d/")
-
-;; ;;;;
-;; ;;;; The Solarized colour theme, ported to Emacs.
-;; ;;;; https://github.com/bbatsov/solarized-emacs
-;; ;; make the fringe stand out from the background
-;; (setq solarized-distinct-fringe-background t)
-
-;; ;; make the modeline high contrast
-;; (setq solarized-high-contrast-mode-line t)
-
-;; (add-to-list 'load-path "~/.emacs.d/solarized-emacs") ;github repo.
-;; (add-to-list 'custom-theme-load-path "~/.emacs.d/themes")
-;; (require 'solarized)
-;; (load-theme 'solarized-dark t)
-
 
 ;(load-theme 'deeper-blue t)
 (load-theme 'wombat t)
@@ -87,7 +71,7 @@
 (add-to-list 'default-frame-alist '(vertical-scroll-bars . nil))
 ;; 背景の透過
 ;; (add-to-list 'default-frame-alist '(alpha . (85 20)))
-(add-to-list 'default-frame-alist '(alpha . (92 70)))
+(add-to-list 'default-frame-alist '(alpha . (96 80)))
 
 ;;; フォントの設定
 (when (find-font (font-spec :family "UmePlus Gothic mod"))
@@ -158,16 +142,9 @@
 
 
 ;;;;;; packages
-;; ;;; color-theme
-;; ;;; via http://d.hatena.ne.jp/fatrow/20101025/emacs_color_theme
-;; (require 'color-theme)
-;; (require 'zenburn)
-;; (eval-after-load "color-theme"
-;;   '(progn
-;;      (color-theme-initialize)
-;; ;     (color-theme-ld-dark)
-;;      (color-theme-zenburn)
-;;      ))
+
+;;;; Powerline
+(require 'powerline)
 
 ;;; Aspell
 (setq ispell-program-name "aspell")
@@ -611,8 +588,10 @@
 
 ;;;; Markdown
 (autoload 'markdown-mode "markdown-mode.el" "Major mode for editing Markdown files" t)
-(setq auto-mode-alist (cons '("\\.markdown" . markdown-mode) auto-mode-alist))
-
+(add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.txt\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 ;;;; helm
 ;;;; this section must be here.
@@ -628,6 +607,9 @@
 (global-set-key (kbd "M-y") 'helm-show-kill-ring)
 (helm-mode 1)
 
+(require 'helm-ls-git)
+(global-set-key (kbd "C-<f6>") 'helm-ls-git-ls)
+(global-set-key (kbd "C-x C-d") 'helm-browse-project)
 ;;;;
 
 (custom-set-variables

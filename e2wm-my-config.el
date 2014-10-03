@@ -186,8 +186,14 @@
 ;;↑cygwin環境の場合は "C:/cygwin/tmp/wmclock.jpg" とかにすると良いかも
 
 ;; for bijin (default)
-;(setq e2wm:def-plugin-clock-url "http://www.bijint.com/jp/img/clk/%H%M.jpg")
-;(setq e2wm:def-plugin-clock-referer "http://www.bijint.com/jp/")
+(setq e2wm:def-plugin-clock-url "http://www.bijint.com/jp/img/clk/%H%M.jpg")
+(setq e2wm:def-plugin-clock-referer "http://www.bijint.com/jp/")
+;; for 2011
+;(setq e2wm:def-plugin-clock-url "http://www.bijint.com/2011jp/tokei_images/%H%M.jpg")
+;(setq e2wm:def-plugin-clock-referer "http://www.bijint.com/2011jp/")
+;; for 2012
+;(setq e2wm:def-plugin-clock-url "http://www.bijint.com/2012jp/tokei_images/%H%M.jpg")
+;(setq e2wm:def-plugin-clock-referer "http://www.bijint.com/2012jp/")
 
 ;; for binan
 ;; (setq e2wm:def-plugin-clock-url "http://www.bijint.com/binan/tokei_images/%H%M.jpg")
@@ -208,9 +214,6 @@
 ;; for local:北海道
 ;;(setq e2wm:def-plugin-clock-url "http://www.bijint.com/hokkaido/tokei_images/%H%M.jpg")
 ;;(setq e2wm:def-plugin-clock-referer "http://www.bijint.com/hokkaido/")
-;; for 2011
-(setq e2wm:def-plugin-clock-url "http://www.bijint.com/2011jp/tokei_images/%H%M.jpg")
-(setq e2wm:def-plugin-clock-referer "http://www.bijint.com/2011jp/")
 ;; for local:仙台
 ;(setq e2wm:def-plugin-clock-url "http://www.bijint.com/sendai/tokei_images/%H%M.jpg")
 ;(setq e2wm:def-plugin-clock-referer "http://www.bijint.com/sendai/")
